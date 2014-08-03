@@ -72,13 +72,13 @@ namespace SilverDaleSchools.Models
 
                     theNewResult.Sex = dr["Sex"].ToString();
 
-                   // string theV = dr["No of Times School Opened"].ToString();
+                   // string theV = dr["No# of Times School Opened"].ToString();
 
                    
                  //   dr.
                     try
                     {
-                        theNewResult.NoofTimesSchoolOpened = Convert.ToInt32(dr["No of Times School Opened"].ToString());
+                        theNewResult.NoofTimesSchoolOpened = Convert.ToInt32(dr["No# of Times School Opened"].ToString());
                     }
                     catch (Exception e)
                     {
@@ -86,7 +86,7 @@ namespace SilverDaleSchools.Models
                     }
                     try
                     {
-                        theNewResult.NoofTimesPresent = Convert.ToInt32(dr["No of Times Present"].ToString());
+                        theNewResult.NoofTimesPresent = Convert.ToInt32(dr["No# of Times Present"].ToString());
                     }
                     catch(Exception e)
                     {
@@ -95,7 +95,7 @@ namespace SilverDaleSchools.Models
 
                     try
                     {
-                        theNewResult.NoofTimesPunctual = Convert.ToInt32(dr["No of Times Punctual"].ToString());
+                        theNewResult.NoofTimesPunctual = Convert.ToInt32(dr["No# of Times Punctual"].ToString());
                     }
                     catch (Exception e)
                     {
@@ -104,7 +104,7 @@ namespace SilverDaleSchools.Models
 
                     try
                     {
-                        theNewResult.NoofTimesAbsent = Convert.ToInt32(dr["No of Times Absent"].ToString());
+                        theNewResult.NoofTimesAbsent = Convert.ToInt32(dr["No# of Times Absent"].ToString());
                     }
                     catch (Exception e)
                     {
@@ -470,7 +470,7 @@ namespace SilverDaleSchools.Models
                 }
 
                
-             //   work.Save();
+                work.Save();
                 if (System.IO.File.Exists(file))
                 {
 
