@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 
-namespace SchoolManagement.Models
+namespace SilverDaleSchools.Models
 {
     public static class UserIDLengthAdjuster
     {

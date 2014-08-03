@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 
-namespace SchoolManagement.Models
+namespace SilverDaleSchools.Models
 {
     public static class PhotoResize
     {

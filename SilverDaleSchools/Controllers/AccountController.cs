@@ -15,7 +15,7 @@ using System.Data.SqlClient;
 using System.Data;
 using SilverDaleSchools.Model;
 
-namespace SchoolManagement.Controllers
+namespace SilverDaleSchools.Controllers
 {
 
     [Authorize]

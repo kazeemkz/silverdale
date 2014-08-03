@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace SchoolManagement.Models
+namespace SilverDaleSchools.Models
 {
     public class Code
     {

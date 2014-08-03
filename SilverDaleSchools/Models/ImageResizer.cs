@@ -5,7 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Web;
 
-namespace SchoolManagement.Models
+namespace SilverDaleSchools.Models
 {
     public class ImageResizer
     {
