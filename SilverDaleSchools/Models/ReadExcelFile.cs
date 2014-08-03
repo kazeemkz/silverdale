@@ -80,7 +80,7 @@ namespace SilverDaleSchools.Models
                         CountryName = dr["CountryName"].ToString(),
                         LocalLanguageName = dr["LocalLanguageName"].ToString(),
                             Role = "Student",
-                     
+                                             
                      
                     });
                     //}
@@ -92,9 +92,13 @@ namespace SilverDaleSchools.Models
 
                      if (Membership.GetUser(s.UserID.ToString()) == null)
                      {
-                       //  Membership.CreateUser(s.UserID.ToString(), PaddPassword.Padd(s.LastName), s.EmailAddress);
-                       //  Roles.AddUserToRole(s.UserID.ToString(), s.Role);
-                         // work.StaffRepository.Insert(model);
+                         if (string.IsNullOrEmpty(s.EmailAddress))
+                         {
+                             s.EmailAddress = "student@yahoo.com";
+                         }
+                         Membership.CreateUser(s.UserID.ToString(), PaddPassword.Padd(s.LastName), s.EmailAddress);
+                         Roles.AddUserToRole(s.UserID.ToString(), s.Role);
+                          work.StudentRepository.Insert(s);
                          //  work.Save();
                      }
                 }

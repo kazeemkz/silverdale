@@ -25,7 +25,7 @@
         {
 
             UnitOfWork work = new UnitOfWork();
-            work.NewsBoardRepository.Get();
+          //  work.NewsBoardRepository.Get();
 
             if (!Roles.RoleExists("SuperAdmin"))
             {
