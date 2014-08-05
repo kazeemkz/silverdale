@@ -173,7 +173,14 @@ namespace SilverDaleSchools.Controllers
             }
             catch
             {
-
+                List<Level> theLevels = work.LevelRepository.Get().ToList();
+                List<SelectListItem> theItem = new List<SelectListItem>();
+                theItem.Add(new SelectListItem() { Text = "None", Value = "" });
+                foreach (Level l in theLevels)
+                {
+                    theItem.Add(new SelectListItem() { Text = l.LevelName, Value = l.LevelName });
+                }
+                ViewData["Class"] = theItem;
                 return View();
             }
         }
