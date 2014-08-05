@@ -8,6 +8,9 @@ using System.Web;
 using System.Web.Mvc;
 using PagedList;
 using SilverDaleSchools.Model;
+using System.IO;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 
 namespace SilverDaleSchools.Controllers
 {
@@ -107,8 +110,8 @@ namespace SilverDaleSchools.Controllers
         //
         // POST: /Result/Create
         [HttpPost]
-        public async Task<ActionResult> Create(IEnumerable<HttpPostedFileBase> file, Result model)
-        //  public ActionResult Create(IEnumerable<HttpPostedFileBase> file)
+        //public async Task<ActionResult> Create(IEnumerable<HttpPostedFileBase> file, Result model)
+          public ActionResult Create(IEnumerable<HttpPostedFileBase> file, Result model)
         {
             try
             {
@@ -139,7 +142,11 @@ namespace SilverDaleSchools.Controllers
                 if ((Request.Files[0].FileName.EndsWith(".xlsx")) || (Request.Files[0].FileName.EndsWith(".xls")))
                 {
                     string fileExtension = System.IO.Path.GetExtension(Request.Files[0].FileName);
-                    string physicalPath = HttpContext.Server.MapPath("~/Content/") + Request.Files[0].FileName;
+                //    string physicalPath = HttpContext.Server.MapPath("~/Content/") + Request.Files[0].FileName;
+
+
+                    var fileName = Path.GetFileName(Request.Files[0].FileName);
+                    var physicalPath = Path.Combine(Server.MapPath("~/Content/"), fileName);
 
                     if (System.IO.File.Exists(physicalPath))
                     {
@@ -151,7 +158,8 @@ namespace SilverDaleSchools.Controllers
                     //    file
                     // ReadExcelFile.
 
-                    await new ReadResultExcelFile().Read(physicalPath, fileExtension, model.Class, model.Session, model.Term);
+                  //  await new ReadResultExcelFile().Read(physicalPath, fileExtension, model.Class, model.Session, model.Term);
+                     new ReadResultExcelFile().Read(physicalPath, fileExtension, model.Class, model.Session, model.Term);
                 }
                 else
                 {
@@ -170,6 +178,41 @@ namespace SilverDaleSchools.Controllers
             }
         }
 
+
+        //public ActionResult PrintResult(int id)
+        //{
+        //   // Result theResult = work.ResultRepository.GetByID(id);
+
+        //    StringWriter oStringWriter1 = new StringWriter();
+        //    Document itextDoc = new Document(PageSize.LETTER);
+        //    itextDoc.Open();
+        //    Response.ContentType = "application/pdf";
+        //  //  PrintResult print = new PrintResult();
+        //    // Set up the document and the MS to write it to and create the PDF writer instance
+        //    MemoryStream ms = new MemoryStream();
+        //    //Document document = new Document(PageSize.A3.Rotate());
+        //    Document document = new Document(PageSize.A4);
+        //    PdfWriter writer = PdfWriter.GetInstance(document, ms);
+
+        //    // Open the PDF document
+        //    document.Open();
+
+        //    Document thedoc = new SalaryPrinting().PrintPaySlip(thePaymentNow, ref oStringWriter1, ref document);
+        //    iTextSharp.text.pdf.draw.VerticalPositionMark seperator = new iTextSharp.text.pdf.draw.LineSeparator();
+        //    seperator.Offset = -6f;
+
+        //    document.Close();
+
+        //    // Hat tip to David for his code on stackoverflow for this bit
+        //    // http://stackoverflow.com/questions/779430/asp-net-mvc-how-to-get-view-to-generate-pdf
+        //    byte[] file = ms.ToArray();
+        //    MemoryStream output = new MemoryStream();
+        //    output.Write(file, 0, file.Length);
+        //    output.Position = 0;
+        //    // work.DeductionHistoryRepository
+        //    HttpContext.Response.AddHeader("content-disposition", "attachment; filename=form.pdf");
+        //    return new FileStreamResult(output, "application/pdf"); //new FileStreamResult(output, "application/pdf");
+        //}
         //
         // GET: /Result/Edit/5
         public ActionResult Edit(int id)

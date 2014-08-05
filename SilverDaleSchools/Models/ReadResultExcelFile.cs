@@ -12,7 +12,8 @@ namespace SilverDaleSchools.Models
 {
     public class ReadResultExcelFile
     {
-        public async Task Read(string file, string fileExtension, string theClass, string session, string term)
+        public void  Read(string file, string fileExtension, string theClass, string session, string term)
+        //public async Task Read(string file, string fileExtension, string theClass, string session, string term)
         {
          //   await new ReadResultExcelFile().Read(physicalPath, fileExtension, model.Class, model.Session, model.Term);
             try

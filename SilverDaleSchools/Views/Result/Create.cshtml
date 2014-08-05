@@ -9,7 +9,7 @@
 
 @using (Html.BeginForm("Create", "Result", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
-    @Html.AntiForgeryToken()
+    @*@Html.AntiForgeryToken()*@
     <fieldset>
         <legend>UPLOAD STUDENTS' RESULT</legend>
         <div class="form-horizontal">
