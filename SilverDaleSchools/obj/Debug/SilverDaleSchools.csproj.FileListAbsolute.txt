@@ -71,6 +71,8 @@ C:\Project\Silverdaleschoolslagos\SilverDaleSchools\silverdale\SilverDaleSchools
 C:\Project\Silverdaleschoolslagos\SilverDaleSchools\silverdale\SilverDaleSchools\bin\Antlr3.Runtime.dll
 C:\Project\Silverdaleschoolslagos\SilverDaleSchools\silverdale\SilverDaleSchools\bin\EntityFramework.dll
 C:\Project\Silverdaleschoolslagos\SilverDaleSchools\silverdale\SilverDaleSchools\bin\EntityFramework.SqlServer.dll
+C:\Project\Silverdaleschoolslagos\SilverDaleSchools\silverdale\SilverDaleSchools\bin\Excel.dll
+C:\Project\Silverdaleschoolslagos\SilverDaleSchools\silverdale\SilverDaleSchools\bin\ICSharpCode.SharpZipLib.dll
 C:\Project\Silverdaleschoolslagos\SilverDaleSchools\silverdale\SilverDaleSchools\bin\log4net.dll
 C:\Project\Silverdaleschoolslagos\SilverDaleSchools\silverdale\SilverDaleSchools\bin\Microsoft.AspNet.Identity.Core.dll
 C:\Project\Silverdaleschoolslagos\SilverDaleSchools\silverdale\SilverDaleSchools\bin\Microsoft.AspNet.Identity.EntityFramework.dll
@@ -106,6 +108,7 @@ C:\Project\Silverdaleschoolslagos\SilverDaleSchools\silverdale\SilverDaleSchools
 C:\Project\Silverdaleschoolslagos\SilverDaleSchools\silverdale\SilverDaleSchools\bin\SilverDaleSchools.Model.pdb
 C:\Project\Silverdaleschoolslagos\SilverDaleSchools\silverdale\SilverDaleSchools\bin\EntityFramework.xml
 C:\Project\Silverdaleschoolslagos\SilverDaleSchools\silverdale\SilverDaleSchools\bin\EntityFramework.SqlServer.xml
+C:\Project\Silverdaleschoolslagos\SilverDaleSchools\silverdale\SilverDaleSchools\bin\Excel.pdb
 C:\Project\Silverdaleschoolslagos\SilverDaleSchools\silverdale\SilverDaleSchools\bin\PagedList.xml
 C:\Project\Silverdaleschoolslagos\SilverDaleSchools\silverdale\SilverDaleSchools\bin\PagedList.Mvc.xml
 C:\Project\Silverdaleschoolslagos\SilverDaleSchools\silverdale\SilverDaleSchools\bin\System.Web.Helpers.xml

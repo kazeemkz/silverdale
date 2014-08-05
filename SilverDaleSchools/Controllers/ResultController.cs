@@ -11,6 +11,8 @@ using SilverDaleSchools.Model;
 using System.IO;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using Excel;
+using System.Data;
 
 namespace SilverDaleSchools.Controllers
 {
@@ -110,8 +112,8 @@ namespace SilverDaleSchools.Controllers
         //
         // POST: /Result/Create
         [HttpPost]
-        //public async Task<ActionResult> Create(IEnumerable<HttpPostedFileBase> file, Result model)
-          public ActionResult Create(IEnumerable<HttpPostedFileBase> file, Result model)
+        public async Task<ActionResult> Create(IEnumerable<HttpPostedFileBase> file, Result model)
+          //public ActionResult Create(IEnumerable<HttpPostedFileBase> file, Result model)
         {
             try
             {
@@ -145,21 +147,13 @@ namespace SilverDaleSchools.Controllers
                 //    string physicalPath = HttpContext.Server.MapPath("~/Content/") + Request.Files[0].FileName;
 
 
+                 HttpPostedFileBase theFile =   Request.Files[0];
                     var fileName = Path.GetFileName(Request.Files[0].FileName);
-                    var physicalPath = Path.Combine(Server.MapPath("~/Content/"), fileName);
+                   
 
-                    if (System.IO.File.Exists(physicalPath))
-                    {
 
-                        System.IO.File.Delete(physicalPath);
-                    }
-                    Request.Files[0].SaveAs(physicalPath);
-
-                    //    file
-                    // ReadExcelFile.
-
-                  //  await new ReadResultExcelFile().Read(physicalPath, fileExtension, model.Class, model.Session, model.Term);
-                     new ReadResultExcelFile().Read(physicalPath, fileExtension, model.Class, model.Session, model.Term);
+                    await new ReadResultExcelFile().Read( fileExtension, model.Class, model.Session, model.Term,theFile);
+                    //new ReadResultExcelFile().Read( fileExtension, model.Class, model.Session, model.Term, theFile);
                 }
                 else
                 {
