@@ -17,12 +17,13 @@ using System.Data;
 namespace SilverDaleSchools.Controllers
 {
     [Authorize]
-    [DynamicAuthorize]
+   
     public class ResultController : Controller
     {
         UnitOfWork work = new UnitOfWork();
         //
         // GET: /Result/
+        [Authorize]
         public ViewResult Index(string LevelString, string Term, string StudentID, string Session, int? page)
         {
             List<Level> theLevels = work.LevelRepository.Get().ToList();
@@ -87,6 +88,7 @@ namespace SilverDaleSchools.Controllers
 
         //
         // GET: /Result/Details/5
+           [Authorize]
         public ActionResult Details(int id)
         {
             Result theResult = work.ResultRepository.GetByID(id);
@@ -95,6 +97,7 @@ namespace SilverDaleSchools.Controllers
 
         //
         // GET: /Result/Create
+         [DynamicAuthorize]
         public ActionResult Create()
         {
 
@@ -112,6 +115,7 @@ namespace SilverDaleSchools.Controllers
         //
         // POST: /Result/Create
         [HttpPost]
+        [DynamicAuthorize]
         public async Task<ActionResult> Create(IEnumerable<HttpPostedFileBase> file, Result model)
           //public ActionResult Create(IEnumerable<HttpPostedFileBase> file, Result model)
         {
@@ -216,6 +220,7 @@ namespace SilverDaleSchools.Controllers
         //}
         //
         // GET: /Result/Edit/5
+         [DynamicAuthorize]
         public ActionResult Edit(int id)
         {
             Result theResult = work.ResultRepository.GetByID(id);
@@ -225,6 +230,7 @@ namespace SilverDaleSchools.Controllers
         //
         // POST: /Result/Edit/5
         [HttpPost]
+        [DynamicAuthorize]
         public ActionResult Edit(Result model)
         {
             try
@@ -248,6 +254,7 @@ namespace SilverDaleSchools.Controllers
 
         //
         // GET: /Result/Delete/5
+         [DynamicAuthorize]
         public ActionResult Delete(int id)
         {
             Result theResult = work.ResultRepository.GetByID(id);
@@ -257,6 +264,7 @@ namespace SilverDaleSchools.Controllers
         //
         // POST: /Result/Delete/5
         [HttpPost]
+        [DynamicAuthorize]
         public ActionResult Delete(Result model)
         {
             try

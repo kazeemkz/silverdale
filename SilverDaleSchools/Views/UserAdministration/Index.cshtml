@@ -157,7 +157,11 @@
                 <tr>
 
                     <td>
-                        @Html.ActionLink(role, "Role", new { id = role })
+                        @if (role != "Student")
+                        {
+                             @Html.ActionLink(role, "Role", new { id = role })
+                        }
+                       
                     </td>
                     <td>
                         @if ( role == "Default")

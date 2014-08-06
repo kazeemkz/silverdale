@@ -104,6 +104,9 @@
     <table class="table-striped  table-condensed table-responsive table-hover tab-pane  ">
         <tr>
             <th>
+                <b>Student ID</b>
+            </th>
+            <th>
                <b>First Name</b>
             </th>
 
@@ -113,10 +116,7 @@
             <th>
                 <b>Last Name</b>
             </th>
-            <th>
-              <b>Student ID</b>
-            </th>
-
+           
             <th>
                <b>Sex</b>
             </th>
@@ -160,6 +160,9 @@
         {
             <tr>
                 <td>
+                    @Html.DisplayFor(modelItem => item.UserID)
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.FirstName)
                 </td>
 
@@ -169,9 +172,7 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.LastName)
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UserID)
-                </td>
+               
                 <td>
                     @Html.DisplayFor(modelItem => item.Sex)
                 </td>

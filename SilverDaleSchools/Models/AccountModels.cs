@@ -30,9 +30,10 @@ namespace SilverDaleSchools.Models
     {
         [Required]
         [Display(Name = "User name")]
-        // [StringLength(10, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 2)]
-        [RegularExpression("^([a-zA-Z0-9 .&'-]+)$", ErrorMessage = "Invalid")]
-        [StringLength(10, ErrorMessage = ".", MinimumLength = 2)]
+        [StringLength(20, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 2)]
+       // [RegularExpression("^([a-zA-Z0-9 .&'-]+)$", ErrorMessage = "Invalid")]
+        [RegularExpression("^([a-zA-Z0-9 ./'-]+)$", ErrorMessage = "Invalid")]
+       // [StringLength(10, ErrorMessage = ".oooo", MinimumLength = 2)]
         public string UserName { get; set; }
 
         [Required]

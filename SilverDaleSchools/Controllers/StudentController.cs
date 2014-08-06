@@ -180,19 +180,15 @@ namespace SilverDaleSchools.Controllers
                 if ((Request.Files[0].FileName.EndsWith(".xlsx")) || (Request.Files[0].FileName.EndsWith(".xls")))
                 {
                     string fileExtension = System.IO.Path.GetExtension(Request.Files[0].FileName);
-                    string physicalPath = HttpContext.Server.MapPath("~/Content/") + Request.Files[0].FileName;
+                    //    string physicalPath = HttpContext.Server.MapPath("~/Content/") + Request.Files[0].FileName;
 
-                    if (System.IO.File.Exists(physicalPath))
-                    {
 
-                        System.IO.File.Delete(physicalPath);
-                    }
-                    Request.Files[0].SaveAs(physicalPath);
+                    HttpPostedFileBase theFile = Request.Files[0];
 
                     //    file
                     // ReadExcelFile.
 
-                    await new ReadExcelFile().Read(physicalPath, fileExtension);
+                    await new ReadExcelFile().Read(fileExtension, theFile);
                 }
                 else
                 {

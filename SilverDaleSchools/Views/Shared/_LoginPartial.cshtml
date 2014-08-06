@@ -5,7 +5,7 @@
 
     SilverDaleSchools.DAL.UnitOfWork work = new SilverDaleSchools.DAL.UnitOfWork();
     string theUser = User.Identity.Name;
-    Int32 userInt = Convert.ToInt32(theUser);
+   // Int32 userInt = Convert.ToInt32(theUser);
     //SilverDaleSchools.Model.Person thePerson = work.PersonRepository.Get(a => a.UserID == theUser).First();
 
     List<SilverDaleSchools.Model.Student> theStudent = work.StudentRepository.Get(a => a.UserID == theUser).ToList();

@@ -5,10 +5,15 @@
 }
 
 @*<h2>Details</h2>*@
+<style type="text/css">
+    dl.dt {
+        width: 0px;
+    }
+</style>
 <fieldset>
     <legend></legend>
     <div>
-        <h4>RESULT DETAILS</h4>
+        <h4> @Model.Surname RESULT DETAILS</h4>
         <hr />
         <dl class="dl-horizontal">
             <dt>
@@ -38,19 +43,19 @@
             }
             @if (Model.Term == "2")
             {
-                 <dd>
+                <dd>
                     <b>Second</b>
                 </dd>
             }
             @if (Model.Term == "3")
             {
-                 <dd>
+                <dd>
                     <b>Third</b>
                 </dd>
             }
 
 
-           
+
 
             <dt>
                 @Html.DisplayNameFor(model => model.Class)
@@ -204,21 +209,31 @@
                 @Html.DisplayFor(model => model.TakeCareofBooksandProperty)
             </dd>
 
-            <dt>
+            @*<dt>
                 @Html.DisplayNameFor(model => model.FormMastersComments)
-            </dt>
-
-            <dd>
+            </dt>*@
+            <hr />
+            <fieldset>
+                <legend>Form Master's Comments</legend>
                 @Html.DisplayFor(model => model.FormMastersComments)
-            </dd>
+            </fieldset>
+            @*<dd>
+                @Html.DisplayFor(model => model.FormMastersComments)
+            </dd>*@
 
-            <dt>
+            @*<dt>
                 @Html.DisplayNameFor(model => model.PrincipalsComment)
             </dt>
 
             <dd>
                 @Html.DisplayFor(model => model.PrincipalsComment)
-            </dd>
+            </dd>*@
+
+            <hr />
+            <fieldset>
+                <legend>Form Principals Comments</legend>
+                @Html.DisplayFor(model => model.PrincipalsComment)
+            </fieldset>
 
             <dt>
                 @Html.DisplayNameFor(model => model.TotalScoreObtainable)
@@ -244,11 +259,16 @@
                 @Html.DisplayFor(model => model.Percentage)
             </dd>
 
+        </dl>
 
+      
             <fieldset>
 
                 <legend>SUBJECT SCORES</legend>
 
+                @if (Model.EnglishLanguage_Attendance > 0)
+
+                { 
                 <dt>
                     @Html.DisplayNameFor(model => model.EnglishLanguage_Attendance)
                 </dt>
@@ -264,7 +284,7 @@
                 <dd>
                     @Html.DisplayFor(model => model.EnglishLanguage_ContinuousAssessment)
                 </dd>
-
+              
                 <dt>
                     @Html.DisplayNameFor(model => model.EnglishLanguage_ExaminationScore)
                 </dt>
@@ -272,6 +292,8 @@
                 <dd>
                     @Html.DisplayFor(model => model.EnglishLanguage_ExaminationScore)
                 </dd>
+
+
 
                 <dt>
                     @Html.DisplayNameFor(model => model.EnglishLanguage_TotalScore)
@@ -281,6 +303,15 @@
                     @Html.DisplayFor(model => model.EnglishLanguage_TotalScore)
                 </dd>
 
+                    <hr />
+                      }
+                
+                
+
+
+@if (Model.Yoruba_Attendance > 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.Yoruba_Attendance)
                 </dt>
@@ -312,6 +343,16 @@
                 <dd>
                     @Html.DisplayFor(model => model.Yoruba_TotalScore)
                 </dd>
+    <hr />
+} 
+                
+
+
+
+@if (Model.French_Attendance > 0)
+
+                {
+
 
                 <dt>
                     @Html.DisplayNameFor(model => model.French_Attendance)
@@ -345,6 +386,19 @@
                     @Html.DisplayFor(model => model.French_TotalScore)
                 </dd>
 
+    <hr />
+    
+}
+
+
+
+
+
+
+
+@if (Model.LiteratureinEnglish_Attendance > 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.LiteratureinEnglish_Attendance)
                 </dt>
@@ -377,6 +431,12 @@
                     @Html.DisplayFor(model => model.LiteratureinEnglish_TotalScore)
                 </dd>
 
+    <hr />
+}
+
+              @if (Model.Igbo_Attendance> 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.Igbo_Attendance)
                 </dt>
@@ -409,6 +469,14 @@
                     @Html.DisplayFor(model => model.Igbo_TotalScore)
                 </dd>
 
+                  
+                  <hr />
+                  
+              }
+              
+@if (Model.Hausa_Attendance > 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.Hausa_Attendance)
                 </dt>
@@ -432,14 +500,24 @@
                 <dd>
                     @Html.DisplayFor(model => model.Hausa_ExaminationScore)
                 </dd>
-
-                <dt>
+    
+      <dt>
                     @Html.DisplayNameFor(model => model.Hausa_TotalScore)
                 </dt>
 
                 <dd>
                     @Html.DisplayFor(model => model.Hausa_TotalScore)
                 </dd>
+    <hr />
+    
+}
+
+
+@if (Model.Physics_Attendance > 0)
+
+                {
+
+
 
                 <dt>
                     @Html.DisplayNameFor(model => model.Physics_Attendance)
@@ -472,7 +550,12 @@
                 <dd>
                     @Html.DisplayFor(model => model.Physics_TotalScore)
                 </dd>
+    <hr />
+}
 
+@if (Model.Chemistry_Attendance> 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.Chemistry_Attendance)
                 </dt>
@@ -505,6 +588,13 @@
                     @Html.DisplayFor(model => model.Chemistry_TotalScore)
                 </dd>
 
+    
+    <hr />
+}
+
+@if (Model.Biology_Attendance > 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.Biology_Attendance)
                 </dt>
@@ -536,7 +626,12 @@
                 <dd>
                     @Html.DisplayFor(model => model.Biology_TotalScore)
                 </dd>
+    <hr />
+}
 
+@if (Model.Commerce_Attendance > 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.Computer_Attendance)
                 </dt>
@@ -569,6 +664,15 @@
                     @Html.DisplayFor(model => model.Computer_TotalScore)
                 </dd>
 
+    
+    <hr />
+    
+}
+
+
+@if (Model.PhysicalHealthEducation_Attendance > 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.PhysicalHealthEducation_Attendance)
                 </dt>
@@ -601,6 +705,16 @@
                     @Html.DisplayFor(model => model.PhysicalHealthEducation_TotalScore)
                 </dd>
 
+    
+    <hr />
+    
+    
+}
+
+
+                @if (Model.Mathematics_Attendance > 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.Mathematics_Attendance)
                 </dt>
@@ -633,6 +747,19 @@
                     @Html.DisplayFor(model => model.Mathematics_TotalScore)
                 </dd>
 
+                    
+                    <hr />
+                    
+                    
+                }
+                
+
+
+
+
+@if (Model.FurtherMathematics_Attendance > 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.FurtherMathematics_Attendance)
                 </dt>
@@ -665,6 +792,16 @@
                     @Html.DisplayFor(model => model.FurtherMathematics_TotalScore)
                 </dd>
 
+    <hr />
+    
+}
+
+
+
+
+@if (Model.AgriculturalScience_Attendance > 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.AgriculturalScience_Attendance)
                 </dt>
@@ -697,6 +834,15 @@
                     @Html.DisplayFor(model => model.AgriculturalScience_TotalScore)
                 </dd>
 
+    
+    
+    <hr />
+}
+
+
+@if (Model.FoodandNutrition_Attendance> 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.FoodandNutrition_Attendance)
                 </dt>
@@ -729,6 +875,15 @@
                     @Html.DisplayFor(model => model.FoodandNutrition_TotalScore)
                 </dd>
 
+    
+    
+    <hr />
+    
+}
+
+@if (Model.TechnicalDrawing_Attendance> 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.TechnicalDrawing_Attendance)
                 </dt>
@@ -761,6 +916,15 @@
                     @Html.DisplayFor(model => model.TechnicalDrawing_TotalScore)
                 </dd>
 
+    
+    
+    <hr />
+}
+
+
+@if (Model.VisualArt_Attendance > 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.VisualArt_Attendance)
                 </dt>
@@ -793,6 +957,15 @@
                     @Html.DisplayFor(model => model.VisualArt_TotalScore)
                 </dd>
 
+    
+    <hr />
+    
+}
+
+
+@if (Model.HomeEconomics_Attendance > 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.HomeEconomics_Attendance)
                 </dt>
@@ -824,7 +997,14 @@
                 <dd>
                     @Html.DisplayFor(model => model.HomeEconomics_TotalScore)
                 </dd>
+    
+    <hr />
+}
 
+
+@if (Model.Music_Attendance > 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.Music_Attendance)
                 </dt>
@@ -856,7 +1036,13 @@
                 <dd>
                     @Html.DisplayFor(model => model.Music_TotalScore)
                 </dd>
+    <hr />
 
+}
+
+@if (Model.Economics_Attendance > 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.Economics_Attendance)
                 </dt>
@@ -888,7 +1074,13 @@
                 <dd>
                     @Html.DisplayFor(model => model.Economics_TotalScore)
                 </dd>
+    <hr />
+    
+}
 
+@if (Model.Geography_Attendance > 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.Geography_Attendance)
                 </dt>
@@ -920,7 +1112,13 @@
                 <dd>
                     @Html.DisplayFor(model => model.Geography_TotalScore)
                 </dd>
+    
+    <hr />
+}
 
+@if (Model.FinancialAccounting_Attendance> 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.FinancialAccounting_Attendance)
                 </dt>
@@ -953,6 +1151,12 @@
                     @Html.DisplayFor(model => model.FinancialAccounting_TotalScore)
                 </dd>
 
+    <hr />
+}
+
+@if (Model.History_Attendance > 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.History_Attendance)
                 </dt>
@@ -977,6 +1181,7 @@
                     @Html.DisplayFor(model => model.History_ExaminationScore)
                 </dd>
 
+    
                 <dt>
                     @Html.DisplayNameFor(model => model.History_TotalScore)
                 </dt>
@@ -984,6 +1189,12 @@
                 <dd>
                     @Html.DisplayFor(model => model.History_TotalScore)
                 </dd>
+    <hr />
+}
+
+@if (Model.BusinessStudies_Attendance > 0)
+
+                {
 
                 <dt>
                     @Html.DisplayNameFor(model => model.BusinessStudies_Attendance)
@@ -1017,6 +1228,14 @@
                     @Html.DisplayFor(model => model.BusinessStudies_TotalScore)
                 </dd>
 
+    
+    <hr />
+}
+
+
+@if (Model.SocialStudies_Attendance > 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.SocialStudies_Attendance)
                 </dt>
@@ -1048,6 +1267,13 @@
                 <dd>
                     @Html.DisplayFor(model => model.SocialStudies_TotalScore)
                 </dd>
+    <hr />
+}
+
+
+@if (Model.Commerce_Attendance > 0)
+
+                {
 
                 <dt>
                     @Html.DisplayNameFor(model => model.Commerce_Attendance)
@@ -1081,6 +1307,14 @@
                     @Html.DisplayFor(model => model.Commerce_TotalScore)
                 </dd>
 
+    
+    <hr />
+
+}
+
+@if (Model.Government_Attendance > 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.Government_Attendance)
                 </dt>
@@ -1113,6 +1347,12 @@
                     @Html.DisplayFor(model => model.Government_TotalScore)
                 </dd>
 
+    <hr />
+}
+
+@if (Model.ChristianReligiousKnowledge_Attendance > 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.ChristianReligiousKnowledge_Attendance)
                 </dt>
@@ -1145,6 +1385,13 @@
                     @Html.DisplayFor(model => model.ChristianReligiousKnowledge_TotalScore)
                 </dd>
 
+    
+    <hr />
+}
+
+@if (Model.IslamicReligiousKnowledge_Attendance > 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.IslamicReligiousKnowledge_Attendance)
                 </dt>
@@ -1177,6 +1424,13 @@
                     @Html.DisplayFor(model => model.IslamicReligiousKnowledge_TotalScore)
                 </dd>
 
+    <hr />
+
+}
+
+@if (Model.RoyalEnglish_Attendance > 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.RoyalEnglish_Attendance)
                 </dt>
@@ -1208,7 +1462,14 @@
                 <dd>
                     @Html.DisplayFor(model => model.RoyalEnglish_TotalScore)
                 </dd>
+    <hr />
+    
+    
+}
 
+@if (Model.BasicScience_Attendance> 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.BasicScience_Attendance)
                 </dt>
@@ -1241,6 +1502,15 @@
                     @Html.DisplayFor(model => model.BasicScience_TotalScore)
                 </dd>
 
+    
+    <hr />
+    
+    
+}
+
+@if (Model.BasicTechnology_Attendance> 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.BasicTechnology_Attendance)
                 </dt>
@@ -1273,6 +1543,13 @@
                     @Html.DisplayFor(model => model.BasicTechnology_TotalScore)
                 </dd>
 
+    
+    <hr />
+
+}
+@if (Model.CivicEducation_Attendance > 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.CivicEducation_Attendance)
                 </dt>
@@ -1305,6 +1582,12 @@
                     @Html.DisplayFor(model => model.CivicEducation_TotalScore)
                 </dd>
 
+    <hr />
+}
+
+@if (Model.CreativeArt_Attendance> 0)
+
+                {
                 <dt>
                     @Html.DisplayNameFor(model => model.CreativeArt_Attendance)
                 </dt>
@@ -1336,10 +1619,12 @@
                 <dd>
                     @Html.DisplayFor(model => model.CreativeArt_TotalScore)
                 </dd>
-        </dl>
-    </div>
+    
+    <hr />
+}
+    
 </fieldset>
-<p>
+@*<p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.ResultID }) |
     @Html.ActionLink("Back to List", "Index")
-</p>
+</p>*@

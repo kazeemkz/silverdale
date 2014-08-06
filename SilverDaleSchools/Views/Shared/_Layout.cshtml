@@ -46,7 +46,7 @@
         ul.nav li.dropdown:hover > ul.dropdown-menu {
             display: block;
         }
-
+      
         .ui-datepicker {
             background-color: #333;
             border: 1px solid #555;
@@ -137,7 +137,23 @@
 
                             @if (theRole != null)
                             {
-                                if (Request.IsAuthenticated && theRole[0].Student != "")
+                                if (Request.IsAuthenticated && User.IsInRole("Student"))
+                                {
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" id="dropdownCommonMenu4" data-toggle="dropdown">RESULT</a>
+                                        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownCommonMenu4">
+
+
+                                            <li role="menuitem">
+                                            <li role="menuitem">@Html.ActionLink("View Result", "Index", "Result")</li>
+                                            <li role="menuitem" class="divider"></li>
+                                         
+                                        </ul>
+                                    </li>
+                                }
+                                else
+                                {
+                                     if (Request.IsAuthenticated && theRole[0].Student != "")
                                 {
 
 
@@ -237,6 +253,8 @@
                                         </ul>
                                     </li>
                                 }
+                                }
+                               
                             }
                         </ul>
                         @Html.Partial("_LoginPartial")

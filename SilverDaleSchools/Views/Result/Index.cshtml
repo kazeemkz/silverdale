@@ -1,71 +1,71 @@
 ﻿@*@model IEnumerable<silverdaleschools.model.result>
-    *@
-    @model PagedList.IPagedList<SilverDaleSchools.Model.Result>
-        @{
-        ViewBag.Title = "Index";
-        }
-        @using (Html.BeginForm())
-        {
-        <fieldset>
-            <legend>Search Box</legend>
+*@
+@model PagedList.IPagedList<SilverDaleSchools.Model.Result>
+@{
+    ViewBag.Title = "Index";
+}
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>Search Box</legend>
 
-            <table>
-
-                
-                <tr>
-                    <td>
-                        <b>Find by Term:</b>
-                    </td>
-                    <td>
-                        @Html.DropDownList("Term", SilverDaleSchools.Model.LevelDictionary.TermWithNull)
-                        &nbsp;
-                    </td>
-                </tr>
-               
-                <tr>
-                    <td>
-                        <b>Find by Session:</b>
-                    </td>
-                    <td>
-                        @Html.DropDownList("Session", SilverDaleSchools.Model.LevelDictionary.SessionList)
-                        &nbsp;
-                    </td>
-                </tr>
-                <tr>
+        <table>
 
 
-                    <td>
-                        <b>Find by Class:</b>
-                    </td>
-                    <td>
-                        @Html.DropDownList("LevelString", new SelectList((System.Collections.IEnumerable)ViewData["Level"], "Value", "Text"))
-                        @*@Html.TextBox("LevelString")*@
-                        &nbsp;
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Find by Student ID:</b>
-                    </td>
-                    <td>
-                        @Html.TextBox("StudentID")
-                        &nbsp;
-                    </td>
-                </tr>
+            <tr>
+                <td>
+                    <b>Find by Term:</b>
+                </td>
+                <td>
+                    @Html.DropDownList("Term", SilverDaleSchools.Model.LevelDictionary.TermWithNull)
+                    &nbsp;
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <b>Find by Session:</b>
+                </td>
+                <td>
+                    @Html.DropDownList("Session", SilverDaleSchools.Model.LevelDictionary.SessionList)
+                    &nbsp;
+                </td>
+            </tr>
+            <tr>
 
 
-            </table>
-            <input type="submit" value="Search" id="button" class="btn-primary" />
-            <br />
-        </fieldset>
-        }
+                <td>
+                    <b>Find by Class:</b>
+                </td>
+                <td>
+                    @Html.DropDownList("LevelString", new SelectList((System.Collections.IEnumerable)ViewData["Level"], "Value", "Text"))
+                    @*@Html.TextBox("LevelString")*@
+                    &nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Find by Student ID:</b>
+                </td>
+                <td>
+                    @Html.TextBox("StudentID")
+                    &nbsp;
+                </td>
+            </tr>
 
 
-        @*<p>
-            @Html.ActionLink("Create New", "Create")
-        </p>*@
+        </table>
+        <input type="submit" value="Search" id="button" class="btn-primary" />
+        <br />
+    </fieldset>
+}
+
+
+@*<p>
+        @Html.ActionLink("Create New", "Create")
+    </p>*@
 <fieldset>
-    <legend>LIST OF STUDENT RESULTS</legend>
+    <legend>STUDENT RESULTS</legend>
     <table class="table table-striped table-hover table-bordered table-condensed table-responsive">
         <tr>
             <th>
@@ -565,7 +565,7 @@
         </tr>
 
         @foreach (var item in Model)
-            {
+        {
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.StudentNo)
@@ -578,7 +578,7 @@
                 </td>
 
                 <td>
-                    @if(item.Term == "1")
+                    @if (item.Term == "1")
                     {
                         <b>First</b>
                     }
@@ -1074,66 +1074,71 @@
                         @Html.DisplayFor(modelItem => item.CreativeArt_TotalScore)
                     </td>*@
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.ResultID }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.ResultID }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.ResultID })
+
+
+                    @Html.ActionLink("Check Result", "Details", new { id = item.ResultID }) |
+                    @if (!(User.IsInRole("Student")))
+                    {
+                        @Html.ActionLink("Edit", "Edit", new { id = item.ResultID })
+                        @Html.ActionLink("Delete", "Delete", new { id = item.ResultID })
+                    }
                 </td>
             </tr>
-            }
+        }
 
     </table>
 </fieldset>
-        <table>
-            <tr>
-                <td>
-                    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber)
-                    of @Model.PageCount
-                    &nbsp;
-                </td>
-                @if (Model.HasPreviousPage)
-                {
-                <td>
-                    @Html.ActionLink("<<", "Index", new { page = 1, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })
-                </td>
+<table>
+    <tr>
+        <td>
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber)
+            of @Model.PageCount
+            &nbsp;
+        </td>
+        @if (Model.HasPreviousPage)
+        {
+            <td>
+                @Html.ActionLink("<<", "Index", new { page = 1, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })
+            </td>
+            @Html.Raw("&nbsp;")
+            <td>
+                @Html.ActionLink("< Prev", "Index", new { page = Model.PageNumber - 1, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })
+            </td>
+        }
+        else
+        {
+            <td>
+                <<
+            </td>
+            <td>
                 @Html.Raw("&nbsp;")
-                <td>
-                    @Html.ActionLink("< Prev", "Index", new { page = Model.PageNumber - 1, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })
-                </td>
-                }
-                else
-                {
-                <td>
-                    <<
-                </td>
-                <td>
-                    @Html.Raw("&nbsp;")
-                    < Prev
-                </td>
-                }
-                &nbsp;
-                @if (Model.HasNextPage)
-                {
-                <td>
-                    @Html.ActionLink("Next >", "Index", new { page = Model.PageNumber + 1, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })
-                </td>
-                <td>
-                    @Html.Raw("&nbsp;")
-                </td>
-                <td>
-                    @Html.ActionLink(">>", "Index", new { page = Model.PageCount, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })
-                </td>
-                }
-                else
-                {
-                <td>
-                    Next >
-                </td>
-                <td>
-                    @Html.Raw("&nbsp;")
-                </td>
-                <td>
-                    >>
-                </td>
-                }
-            </tr>
-        </table>
+                < Prev
+            </td>
+        }
+        &nbsp;
+        @if (Model.HasNextPage)
+        {
+            <td>
+                @Html.ActionLink("Next >", "Index", new { page = Model.PageNumber + 1, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })
+            </td>
+            <td>
+                @Html.Raw("&nbsp;")
+            </td>
+            <td>
+                @Html.ActionLink(">>", "Index", new { page = Model.PageCount, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })
+            </td>
+        }
+        else
+        {
+            <td>
+                Next >
+            </td>
+            <td>
+                @Html.Raw("&nbsp;")
+            </td>
+            <td>
+                >>
+            </td>
+        }
+    </tr>
+</table>
