@@ -21,8 +21,8 @@ namespace SilverDaleSchools.Models
         public async Task Read(string fileExtension, HttpPostedFileBase theFile)
         {
 
-            try
-            {
+            //try
+            //{
                 UnitOfWork work = new UnitOfWork();
 
                 List<Student> theStudentList = new List<Student>();
@@ -70,17 +70,7 @@ namespace SilverDaleSchools.Models
 
                         if (!string.IsNullOrEmpty(excelReader.GetString(0)) && !string.IsNullOrEmpty(excelReader.GetString(1)) && !string.IsNullOrEmpty(excelReader.GetString(2)))
                         {
-                            // string theString  = null;
-                            //if (excelReader.GetString(0).Contains("/"))
-                            //{
-                            //    theString = excelReader.GetString(0).Replace(@"/", "");
-                            
-                            //}
-                            //else
-                            //{
-                            //    theString = excelReader.GetString(0);
-                            //}
-                      
+                                                
                             theStudentList.Add(new Student
                             {
                               //  UserID = theString,
@@ -114,10 +104,11 @@ namespace SilverDaleSchools.Models
 
                 foreach (Student s in theStudentList)
                 {
-                    work.StudentRepository.Insert(s);
+                  
 
                     if (Membership.GetUser(s.UserID.ToString()) == null)
                     {
+                        work.StudentRepository.Insert(s);
                         if (string.IsNullOrEmpty(s.EmailAddress))
                         {
                             s.EmailAddress = "student@yahoo.com";
@@ -131,13 +122,13 @@ namespace SilverDaleSchools.Models
                 }
                 work.Save();
 
-            }
+            //}
 
-            catch (Exception e)
-            {
+            //catch (Exception e)
+            //{
 
 
-            }
+            //}
 
 
         }
