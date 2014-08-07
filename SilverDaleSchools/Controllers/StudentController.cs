@@ -9,6 +9,9 @@ using System.Web;
 using System.Web.Mvc;
 using PagedList;
 using System.Web.Security;
+using MvcMembership;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace SilverDaleSchools.Controllers
 {
@@ -17,6 +20,8 @@ namespace SilverDaleSchools.Controllers
     public class StudentController : Controller
     {
         UnitOfWork work = new UnitOfWork();
+        private readonly IUserService _userService;
+        private readonly IRolesService _rolesService;
         //
         // GET: /Student/
         public ViewResult Index(string arm, string sortOrder, string PrimarySec, string currentFilter, string ApprovedString, string searchString, string SexString, string LevelString, string StudentIDString, int? page)
@@ -26,7 +31,7 @@ namespace SilverDaleSchools.Controllers
             List<SelectListItem> theItem = new List<SelectListItem>();
             theItem.Add(new SelectListItem() { Text = "None", Value = "" });
 
-           
+
             ViewBag.CurrentSort = sortOrder;
             ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "Name desc" : "";
             ViewBag.DateSortParm = sortOrder == "Date" ? "Date desc" : "Date";
@@ -89,7 +94,7 @@ namespace SilverDaleSchools.Controllers
 
             if (!String.IsNullOrEmpty(StudentIDString))
             {
-               // int theID = Convert.ToInt32(StudentIDString);
+                // int theID = Convert.ToInt32(StudentIDString);
                 students = students.Where(s => s.UserID == StudentIDString);
             }
 
@@ -131,7 +136,7 @@ namespace SilverDaleSchools.Controllers
             {
 
                 ViewBag.Count = 1;
-               // int UserName = Convert.ToInt32(User.Identity.Name);
+                // int UserName = Convert.ToInt32(User.Identity.Name);
                 // List<PrimarySchoolStaff> theStaff = work.PrimarySchoolStaffRepository.Get(a => a.UserID == UserName).ToList();
                 //PrimarySchoolStaff theStaf = theStaff[0];
                 students = students.Where(a => a.UserID == User.Identity.Name);
@@ -172,11 +177,11 @@ namespace SilverDaleSchools.Controllers
             try
             {
                 // TODO: Add insert logic here
-                if (Request.Files[0] == null)
+                if (string.IsNullOrEmpty(Request.Files[0].FileName))
                 {
-                    new ModelError("No Uploaded Document!");
+                  ModelState.AddModelError("","No Uploaded Document!");
                     return View();
-                }//xlsx or xls
+                }
                 if ((Request.Files[0].FileName.EndsWith(".xlsx")) || (Request.Files[0].FileName.EndsWith(".xls")))
                 {
                     string fileExtension = System.IO.Path.GetExtension(Request.Files[0].FileName);
@@ -276,8 +281,30 @@ namespace SilverDaleSchools.Controllers
             try
             {
                 // TODO: Add delete logic here
-                work.StudentRepository.GetByID(model.StudentID);
+                Student theStudent = work.StudentRepository.GetByID(model.StudentID);
+
+                string theUserString = theStudent.UserID;// user.UserName;
+                var user = Membership.GetUser(theUserString);
+                _rolesService.RemoveFromAllRoles(user);
+                _userService.Delete(user);
+
+                work.StudentRepository.Delete(theStudent);
                 work.Save();
+
+
+                // DELETE FROM table_name WHERE some_column=some_value
+                string con = System.Configuration.ConfigurationManager.ConnectionStrings["sdDatabase"].ConnectionString;
+                SqlConnection conn = new System.Data.SqlClient.SqlConnection(con);
+                SqlCommand updateCmd = new SqlCommand("DELETE FROM Users " +
+                    //"SET LastActivityDate = @LastActivityDate " +
+          "WHERE UserName = @UserName", conn);
+
+                //  updateCmd.Parameters.Add("@LastActivityDate", SqlDbType.DateTime).Value = TimeZoneInfo.ConvertTimeToUtc(DateTime.Now).AddMinutes(-10);
+                updateCmd.Parameters.Add("@UserName", SqlDbType.VarChar).Value = theUserString;
+                //updateCmd.Parameters.Add("@ApplicationName", SqlDbType.VarChar, 255).Value = m_ApplicationName;
+                conn.Open();
+                updateCmd.ExecuteNonQuery();
+                conn.Close();
                 return RedirectToAction("Index");
             }
             catch

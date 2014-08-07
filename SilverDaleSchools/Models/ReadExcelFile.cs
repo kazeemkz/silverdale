@@ -21,8 +21,8 @@ namespace SilverDaleSchools.Models
         public async Task Read(string fileExtension, HttpPostedFileBase theFile)
         {
 
-            //try
-            //{
+            try
+            {
                 UnitOfWork work = new UnitOfWork();
 
                 List<Student> theStudentList = new List<Student>();
@@ -68,67 +68,92 @@ namespace SilverDaleSchools.Models
 
                         Result theNewResult = new Result();
 
-                        if (!string.IsNullOrEmpty(excelReader.GetString(0)) && !string.IsNullOrEmpty(excelReader.GetString(1)) && !string.IsNullOrEmpty(excelReader.GetString(2)))
+                        try
                         {
-                                                
-                            theStudentList.Add(new Student
+                            if (!string.IsNullOrEmpty(excelReader.GetString(0)) && !string.IsNullOrEmpty(excelReader.GetString(1)) && !string.IsNullOrEmpty(excelReader.GetString(2)))
                             {
-                              //  UserID = theString,
-                                UserID = (excelReader.GetString(0)),
-                                LastName = excelReader.GetString(1),
-                                FirstName = excelReader.GetString(2),
-                                Middle = excelReader.GetString(3),
-                                Sex = excelReader.GetString(4),
 
-                                PhoneNumber = excelReader.GetString(5),
-                                EmailAddress = excelReader.GetString(6),
+                                theStudentList.Add(new Student
+                                {
+                                    //  UserID = theString,
+                                    UserID = (excelReader.GetString(0)),
+                                    LastName = excelReader.GetString(1),
+                                    FirstName = excelReader.GetString(2),
+                                    Middle = excelReader.GetString(3),
+                                    Sex = excelReader.GetString(4),
 
-                                Address = excelReader.GetString(7),
-                                ParentName = excelReader.GetString(8),
-                                ParentAddress = excelReader.GetString(9),
-                                ParentPhoneNumber = excelReader.GetString(10),
-                                LGAName = excelReader.GetString(11),
-                                StateName = excelReader.GetString(12),
-                                CountryName = excelReader.GetString(13),
-                                LocalLanguageName = excelReader.GetString(14),
-                                Role = "Student",
+                                    PhoneNumber = excelReader.GetString(5),
+                                    EmailAddress = excelReader.GetString(6),
+
+                                    Address = excelReader.GetString(7),
+                                    ParentName = excelReader.GetString(8),
+                                    ParentAddress = excelReader.GetString(9),
+                                    ParentPhoneNumber = excelReader.GetString(10),
+                                    LGAName = excelReader.GetString(11),
+                                    StateName = excelReader.GetString(12),
+                                    CountryName = excelReader.GetString(13),
+                                    LocalLanguageName = excelReader.GetString(14),
+                                    Role = "Student",
 
 
-                            });
+                                });
+                            }
+
+
+                        }
+                        catch (Exception e)
+                        {
+
                         }
 
+
+
+
                     }
+
+
+
+
 
                     counter = counter + 1;
                 }
 
                 foreach (Student s in theStudentList)
                 {
-                  
 
-                    if (Membership.GetUser(s.UserID.ToString()) == null)
+                    try
                     {
-                        work.StudentRepository.Insert(s);
-                        if (string.IsNullOrEmpty(s.EmailAddress))
+                        List<Student> theStudent = work.StudentRepository.Get().Where(a => a.UserID == s.UserID).ToList();//(s.UserID).ToList();
+                        if (Membership.GetUser(s.UserID.ToString()) == null && theStudent.Count() == 0 && !(string.IsNullOrEmpty(s.UserID)))
                         {
-                            s.EmailAddress = "student@yahoo.com";
+                            work.StudentRepository.Insert(s);
+                            if (string.IsNullOrEmpty(s.EmailAddress))
+                            {
+                                s.EmailAddress = "student@yahoo.com";
+                            }
+                            Membership.CreateUser(s.UserID.ToString(), PaddPassword.Padd(s.LastName), s.EmailAddress);
+                            Roles.AddUserToRole(s.UserID.ToString(), s.Role);
+                            Tweaker.AdjustTimer(s.UserID.ToString());
+                            //  work.StudentRepository.Insert(s);
+                            //  work.Save();
                         }
-                        Membership.CreateUser(s.UserID.ToString(), PaddPassword.Padd(s.LastName), s.EmailAddress);
-                        Roles.AddUserToRole(s.UserID.ToString(), s.Role);
-                        Tweaker.AdjustTimer(s.UserID.ToString());
-                        //  work.StudentRepository.Insert(s);
-                        //  work.Save();
                     }
+
+                    catch(Exception e)
+                    {
+
+                    }
+                   
                 }
                 work.Save();
 
-            //}
+            }
 
-            //catch (Exception e)
-            //{
+            catch (Exception e)
+            {
 
 
-            //}
+            }
 
 
         }

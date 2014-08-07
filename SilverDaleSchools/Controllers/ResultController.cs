@@ -17,7 +17,7 @@ using System.Data;
 namespace SilverDaleSchools.Controllers
 {
     [Authorize]
-   
+
     public class ResultController : Controller
     {
         UnitOfWork work = new UnitOfWork();
@@ -39,10 +39,10 @@ namespace SilverDaleSchools.Controllers
 
             //  if(string.IsNullOrEmpty(Term) &&)
 
-            var results = from s in work.ResultRepository.Get()
+            var results = from s in work.ResultRepository.Get().OrderByDescending(a=>a.Class)
                           select s;
 
-            if(User.IsInRole("Student"))
+            if (User.IsInRole("Student"))
             {
                 results = results.Where(a => a.StudentNo == User.Identity.Name);
             }
@@ -88,7 +88,7 @@ namespace SilverDaleSchools.Controllers
 
         //
         // GET: /Result/Details/5
-           [Authorize]
+        [Authorize]
         public ActionResult Details(int id)
         {
             Result theResult = work.ResultRepository.GetByID(id);
@@ -97,7 +97,7 @@ namespace SilverDaleSchools.Controllers
 
         //
         // GET: /Result/Create
-         [DynamicAuthorize]
+        [DynamicAuthorize]
         public ActionResult Create()
         {
 
@@ -117,11 +117,11 @@ namespace SilverDaleSchools.Controllers
         [HttpPost]
         [DynamicAuthorize]
         public async Task<ActionResult> Create(IEnumerable<HttpPostedFileBase> file, Result model)
-          //public ActionResult Create(IEnumerable<HttpPostedFileBase> file, Result model)
+        //public ActionResult Create(IEnumerable<HttpPostedFileBase> file, Result model)
         {
             try
             {
-               // model.
+                // model.
                 List<Result> checkForResult = new List<Result>();
                 checkForResult = work.ResultRepository.Get().Where(a => a.Session == model.Session && a.Term == model.Term && a.Class == model.Class).ToList();
 
@@ -140,23 +140,23 @@ namespace SilverDaleSchools.Controllers
                 }
 
                 // TODO: Add insert logic here
-                if (Request.Files[0] == null)
+                if (string.IsNullOrEmpty(Request.Files[0].FileName))
                 {
-                    new ModelError("No Uploaded Document!");
+                  ModelState.AddModelError("","No Uploaded Document!");
                     return View();
                 }//xlsx or xls
                 if ((Request.Files[0].FileName.EndsWith(".xlsx")) || (Request.Files[0].FileName.EndsWith(".xls")))
                 {
                     string fileExtension = System.IO.Path.GetExtension(Request.Files[0].FileName);
-                //    string physicalPath = HttpContext.Server.MapPath("~/Content/") + Request.Files[0].FileName;
+                    //    string physicalPath = HttpContext.Server.MapPath("~/Content/") + Request.Files[0].FileName;
 
 
-                 HttpPostedFileBase theFile =   Request.Files[0];
+                    HttpPostedFileBase theFile = Request.Files[0];
                     var fileName = Path.GetFileName(Request.Files[0].FileName);
-                   
 
 
-                    await new ReadResultExcelFile().Read( fileExtension, model.Class, model.Session, model.Term,theFile);
+
+                    await new ReadResultExcelFile().Read(fileExtension, model.Class, model.Session, model.Term, theFile);
                     //new ReadResultExcelFile().Read( fileExtension, model.Class, model.Session, model.Term, theFile);
                 }
                 else
@@ -220,7 +220,7 @@ namespace SilverDaleSchools.Controllers
         //}
         //
         // GET: /Result/Edit/5
-         [DynamicAuthorize]
+        [DynamicAuthorize]
         public ActionResult Edit(int id)
         {
             Result theResult = work.ResultRepository.GetByID(id);
@@ -254,7 +254,7 @@ namespace SilverDaleSchools.Controllers
 
         //
         // GET: /Result/Delete/5
-         [DynamicAuthorize]
+        [DynamicAuthorize]
         public ActionResult Delete(int id)
         {
             Result theResult = work.ResultRepository.GetByID(id);

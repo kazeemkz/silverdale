@@ -1080,6 +1080,7 @@
                     @if (!(User.IsInRole("Student")))
                     {
                         @Html.ActionLink("Edit", "Edit", new { id = item.ResultID })
+                        <text>|</text>
                         @Html.ActionLink("Delete", "Delete", new { id = item.ResultID })
                     }
                 </td>

@@ -85,7 +85,7 @@ namespace SilverDaleSchools.Controllers
             Int32 id = 0;
             try
             {
-              // id = Convert.ToInt32(userID);
+                // id = Convert.ToInt32(userID);
 
                 thePersons = work.PersonRepository.Get(a => a.UserID == userID).ToList();
 
@@ -105,10 +105,10 @@ namespace SilverDaleSchools.Controllers
                 //}
                 //else
                 //{
-                    Person thePerson = thePersons[0];
-                    names = thePerson.LastName + " " + thePerson.FirstName + " " + thePerson.Middle;
-                    return names;
-               // }
+                Person thePerson = thePersons[0];
+                names = thePerson.LastName + " " + thePerson.FirstName + " " + thePerson.Middle;
+                return names;
+                // }
             }
             catch (Exception e)
             {
@@ -321,7 +321,7 @@ namespace SilverDaleSchools.Controllers
             {
 
                 string theUserString = user.UserName;
-               // int theUserName = Convert.ToInt32(user.UserName);
+                // int theUserName = Convert.ToInt32(user.UserName);
 
                 _rolesService.RemoveFromAllRoles(user);
                 _userService.Delete(user);
@@ -330,9 +330,21 @@ namespace SilverDaleSchools.Controllers
 
                 try
                 {
-                    Person theUser = work.PersonRepository.Get(a => a.UserID == theUserString).First();
-                    work.PersonRepository.Delete(theUser);
-                    work.Save();
+                    List<Student> theUser = work.StudentRepository.Get(a => a.UserID == theUserString).ToList();
+
+                    if (theUser.Count() > 0)
+                    {
+
+                        work.StudentRepository.Delete(theUser[0]);
+                        work.Save();
+                    }
+
+                    else
+                    {
+                        List<Staff> theStaff = work.StaffRepository.Get(a => a.UserID == theUserString).ToList();
+                        work.StaffRepository.Delete(theStaff[0]);
+                        work.Save();
+                    }
                 }
 
                 catch (Exception e)
@@ -375,7 +387,7 @@ namespace SilverDaleSchools.Controllers
             conn.Open();
             updateCmd.ExecuteNonQuery();
             conn.Close();
-          //  FormsAuthentication.SignOut(
+            //  FormsAuthentication.SignOut(
             // return Redirect(returnUrl);
         }
 
@@ -466,7 +478,7 @@ namespace SilverDaleSchools.Controllers
         {
             var user = _userService.Get(id);
             string theUSerName = user.UserName;
-          //  Int32 theUserNameInt = Convert.ToInt32(theUSerName);
+            //  Int32 theUserNameInt = Convert.ToInt32(theUSerName);
 
             Staff model = work.StaffRepository.Get(a => a.UserID == theUSerName).First();
 

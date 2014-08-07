@@ -9,6 +9,9 @@ using System.Web.Mvc;
 using PagedList;
 using System.Web.Security;
 using SilverDaleSchools.Models;
+using MvcMembership;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace SilverDaleSchools.Controllers
 {
@@ -17,6 +20,8 @@ namespace SilverDaleSchools.Controllers
     public class StaffController : Controller
     {
         UnitOfWork work = new UnitOfWork();
+        private readonly IUserService _userService;
+        private readonly IRolesService _rolesService;
         //
         // GET: /Staff/
         //   public ActionResult Index()
@@ -52,10 +57,10 @@ namespace SilverDaleSchools.Controllers
             var students = from s in work.StaffRepository.Get()
                            select s;
 
-          students =  students.Where(a => a.UserID != "5000001");
-          students = students.Where(a => a.UserID != "5000002");
+            students = students.Where(a => a.UserID != "5000001");
+            students = students.Where(a => a.UserID != "5000002");
             //   students = students.Where(s => s.UserID != 5000001);
-           //  students = students.Where(s => s.UserID != 5000052);
+            //  students = students.Where(s => s.UserID != 5000052);
             if (!String.IsNullOrEmpty(searchString))
             {
                 students = students.Where(s => s.LastName.ToUpper().Contains(searchString.ToUpper())
@@ -74,7 +79,7 @@ namespace SilverDaleSchools.Controllers
 
             if (!String.IsNullOrEmpty(StudentIDString))
             {
-              //  int theID = Convert.ToInt32(StudentIDString);
+                //  int theID = Convert.ToInt32(StudentIDString);
                 students = students.Where(s => s.UserID == StudentIDString);
             }
 
@@ -143,8 +148,8 @@ namespace SilverDaleSchools.Controllers
         // GET: /Staff/Details/5
         public ActionResult Details(int id)
         {
-         Staff theStaff =  work.StaffRepository.GetByID(id);
-         return View(theStaff);
+            Staff theStaff = work.StaffRepository.GetByID(id);
+            return View(theStaff);
         }
 
         //
@@ -216,7 +221,7 @@ namespace SilverDaleSchools.Controllers
         {
             List<SelectListItem> theItem3 = new List<SelectListItem>();
             string[] theRoles = Roles.GetAllRoles();
-           // theItem3.Add(new SelectListItem() { Text = "None", Value = "" });
+            // theItem3.Add(new SelectListItem() { Text = "None", Value = "" });
             foreach (var theRole in theRoles)
             {
                 theItem3.Add(new SelectListItem() { Text = theRole, Value = theRole });
@@ -246,11 +251,11 @@ namespace SilverDaleSchools.Controllers
                     }
                 }
                 Roles.AddUserToRole(model.UserID.ToString(), model.Role);
-               // work.StaffRepository.Update(model);
+                // work.StaffRepository.Update(model);
 
                 SilverDaleSchools.Models.Tweaker.AdjustTimer(model.UserID.ToString());
                 TryUpdateModel(model);
-                if(ModelState.IsValid)
+                if (ModelState.IsValid)
                 {
                     work.StaffRepository.Update(model);
                     work.Save();
@@ -281,8 +286,28 @@ namespace SilverDaleSchools.Controllers
             {
                 // TODO: Add delete logic here
                 Staff theStaff = work.StaffRepository.GetByID(model.StaffID);
+
+                string theUserString = model.UserID;// user.UserName;
+                var user = Membership.GetUser(theUserString);
+                _rolesService.RemoveFromAllRoles(user);
+                _userService.Delete(user);
+
                 work.StaffRepository.Delete(theStaff);
                 work.Save();
+
+                // DELETE FROM table_name WHERE some_column=some_value
+                string con = System.Configuration.ConfigurationManager.ConnectionStrings["sdDatabase"].ConnectionString;
+                SqlConnection conn = new System.Data.SqlClient.SqlConnection(con);
+                SqlCommand updateCmd = new SqlCommand("DELETE FROM Users " +
+                    //"SET LastActivityDate = @LastActivityDate " +
+          "WHERE UserName = @UserName", conn);
+
+                //  updateCmd.Parameters.Add("@LastActivityDate", SqlDbType.DateTime).Value = TimeZoneInfo.ConvertTimeToUtc(DateTime.Now).AddMinutes(-10);
+                updateCmd.Parameters.Add("@UserName", SqlDbType.VarChar).Value = theUserString;
+                //updateCmd.Parameters.Add("@ApplicationName", SqlDbType.VarChar, 255).Value = m_ApplicationName;
+                conn.Open();
+                updateCmd.ExecuteNonQuery();
+                conn.Close();
                 return RedirectToAction("Index");
             }
             catch
