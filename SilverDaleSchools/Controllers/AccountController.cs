@@ -90,17 +90,17 @@ namespace SilverDaleSchools.Controllers
             model.UserName = Server.HtmlEncode(model.UserName);
             model.Password = Server.HtmlEncode(model.Password);
             string name = null;
-            try
-            {
-                name = Membership.GetUser(model.UserName).ToString();
-            }
-            catch (Exception e)
-            {
-                // if (string.IsNullOrEmpty(name))
-                // {
-                name = "8080";
-                // }
-            }
+            //try
+            //{
+            //    name = Membership.GetUser(model.UserName).ToString();
+            //}
+            //catch (Exception e)
+            //{
+            //    // if (string.IsNullOrEmpty(name))
+            //    // {
+            //    name = "8080";
+            //    // }
+            //}
             if (ModelState.IsValid)
             {
                 bool value = false;
