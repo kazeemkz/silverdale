@@ -256,7 +256,7 @@ namespace SilverDaleSchools.Controllers
                     }
                     else
                     {
-                        string con = System.Configuration.ConfigurationManager.ConnectionStrings["emDatabase"].ConnectionString;
+                        string con = System.Configuration.ConfigurationManager.ConnectionStrings["sdDatabase"].ConnectionString;
                         SqlConnection conn = new System.Data.SqlClient.SqlConnection(con);
                         SqlCommand updateCmd = new SqlCommand("UPDATE Users " +
                   "SET LastActivityDate = @LastActivityDate " +
