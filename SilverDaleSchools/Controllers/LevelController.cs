@@ -15,8 +15,8 @@ using SilverDaleSchools.DAL;
 
 namespace SilverDaleSchool.Controllers
 {
-     [Authorize]
-     [DynamicAuthorize]
+    [Authorize]
+    [DynamicAuthorize]
     public class LevelController : Controller
     {
         //
@@ -73,17 +73,67 @@ namespace SilverDaleSchool.Controllers
                 }
                 // TODO: Add insert logic here
                 List<Level> theLevel = work.LevelRepository.Get(a => a.LevelName.ToLower().Equals(model.LevelName.ToLower())).ToList();
+
+                int tracker = 0;
                 if (theLevel.Count > 0)
+                {
+                    foreach (Level l in theLevel)
+                    {
+                        if (!(string.IsNullOrEmpty(l.Type)))
+                        {
+                            if (!(string.IsNullOrEmpty(model.Type)))
+                            {
+
+                                if (l.Type.ToLower() == model.Type.ToLower())
+                                {
+                                    tracker = 1;
+                                    break;
+                                    // ModelState.AddModelError("", "Class has Already been Created");
+                                    // return View(model);
+                                }
+                            }
+
+                        }
+
+                        if ((string.IsNullOrEmpty(l.Type)))
+                        {
+                            if ((string.IsNullOrEmpty(model.Type)))
+                            {
+
+                                if (l.LevelName.ToLower() == model.LevelName.ToLower())
+                                {
+                                    tracker = 1;
+                                    break;
+                                    // ModelState.AddModelError("", "Class has Already been Created");
+                                    // return View(model);
+                                }
+                            }
+
+                        }
+//
+                      //  work.LevelRepository.Insert(model);
+                      //  work.Save();
+                        //  ModelState.AddModelError("", "Class has Already been Created");
+                        //  return View(model);
+                    }
+                }
+
+                if (tracker == 1)
                 {
                     ModelState.AddModelError("", "Class has Already been Created");
                     return View(model);
                 }
                 else
                 {
-
                     work.LevelRepository.Insert(model);
                     work.Save();
                 }
+                //else
+                //{
+
+                //    work.LevelRepository.Insert(model);
+                //    work.Save();
+                //}
 
                 return RedirectToAction("Index");
             }
@@ -120,22 +170,72 @@ namespace SilverDaleSchool.Controllers
                 }
 
                 // TODO: Add insert logic here
-                List<Level> theLevel = work.LevelRepository.Get(a => a.LevelName.ToLower().Equals(model.LevelName.ToLower())).ToList();
-                if (theLevel.Count > 0)
-                {
-                    ModelState.AddModelError("", " Class has Already been Created");
-                    return View(model);
-                }
+               // List<Level> theLevel = work.LevelRepository.Get(a => a.LevelName.ToLower().Equals(model.LevelName.ToLower())).ToList();
+
+                //int tracker = 0;
+                //if (theLevel.Count > 0)
+                //{
+                //    foreach (Level l in theLevel)
+                //    {
+                //        if (!(string.IsNullOrEmpty(l.Type)))
+                //        {
+                //            if (!(string.IsNullOrEmpty(model.Type)))
+                //            {
+
+                //                if (l.Type.ToLower() == model.Type.ToLower())
+                //                {
+                //                    tracker = 1;
+                //                    break;
+                //                    // ModelState.AddModelError("", "Class has Already been Created");
+                //                    // return View(model);
+                //                }
+                //            }
+
+                //        }
+
+                //        if ((string.IsNullOrEmpty(l.Type)))
+                //        {
+                //            if ((string.IsNullOrEmpty(model.Type)))
+                //            {
+
+                //                if (l.LevelName.ToLower() == model.LevelName.ToLower())
+                //                {
+                //                    tracker = 1;
+                //                    break;
+                //                    // ModelState.AddModelError("", "Class has Already been Created");
+                //                    // return View(model);
+                //                }
+                //            }
+
+                //        }
+                //        //
+                //        //  work.LevelRepository.Insert(model);
+                //        //  work.Save();
+                //        //  ModelState.AddModelError("", "Class has Already been Created");
+                //        //  return View(model);
+                //    }
+                //}
+
+                //if (tracker == 1)
+                //{
+                  //  ModelState.AddModelError("", "Class has Already been Created");
+                  //  return View(model);
+                //}
+                //else
+                //{
+                //    work.LevelRepository.Update(model);
+                //    work.Save();
+                //}
 
 
                 work.LevelRepository.Update(model);
-                work.Save();
-                if (User.Identity.Name != "5000001")
-                {
-                    //AuditTrail audit = new AuditTrail { Date = DateTime.Now, Action = "Edited Class", UserID = User.Identity.Name };
-                    //work.AuditTrailRepository.Insert(audit);
-                    //work.Save();
-                }
+               work.Save();
+                //if (User.Identity.Name != "5000001")
+                //{
+                //    //AuditTrail audit = new AuditTrail { Date = DateTime.Now, Action = "Edited Class", UserID = User.Identity.Name };
+                //    //work.AuditTrailRepository.Insert(audit);
+                //    //work.Save();
+                //}
 
                 return RedirectToAction("Index");
             }
@@ -153,7 +253,7 @@ namespace SilverDaleSchool.Controllers
             Int32 theId = Convert.ToInt32(SilverDaleSchools.Models.Encript.DecryptString(id, true));
 
             Level model = work.LevelRepository.GetByID(theId);
-          //  Level theLevel = work.LevelRepository.GetByID(id);
+            //  Level theLevel = work.LevelRepository.GetByID(id);
             return View(model);
             // return View();
         }
@@ -167,7 +267,7 @@ namespace SilverDaleSchool.Controllers
             try
             {
 
-             //   Int32 theId = Convert.ToInt32(SilverDaleSchools.Models.Encript.DecryptString(id, true));
+                //   Int32 theId = Convert.ToInt32(SilverDaleSchools.Models.Encript.DecryptString(id, true));
 
                 Level theLevel = work.LevelRepository.GetByID(model.LevelID);
                 //string theL = model.LevelName;

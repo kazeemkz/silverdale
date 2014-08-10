@@ -126,7 +126,7 @@ namespace SilverDaleSchools.Controllers
             int pageSize = 40;
             int pageNumber = (page ?? 1);
             ViewBag.Count = students.Count();
-
+           // ViewBag.Count = results.Count();
             //if (!(User.IsInRole("SuperAdmin")))
             //{
 

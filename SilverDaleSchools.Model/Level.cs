@@ -16,9 +16,14 @@ namespace SilverDaleSchools.Model
       [Display(Name="Class Name")]
       [Required]
       public string LevelName { get; set; }
-      //  [Required]
-      //[Display(Name = "Class Arm")]
-      //public string Type { get; set; }
+       //[Required]
+      [Display(Name = "Class Arm")]
+      public string Type { get; set; }
+
+
+      //[Required]
+      //[Display(Name = "Class Description")]
+      //public string ClassDescription { get; set; }
 
 
     }

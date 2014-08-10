@@ -229,16 +229,19 @@
     <Compile Include="Models\CreateUserViewModel.cs" />
     <Compile Include="Models\DateHelper.cs" />
     <Compile Include="Models\DayHelper.cs" />
+    <Compile Include="Models\DecimalRounder.cs" />
     <Compile Include="Models\DetailsViewModel.cs" />
     <Compile Include="Models\DynamicAuthorizeAttribute.cs" />
     <Compile Include="Models\EncodeDecode.cs" />
     <Compile Include="Models\Encript.cs" />
+    <Compile Include="Models\GradeCalculator.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ImageResizer.cs" />
     <Compile Include="Models\IndexViewModel.cs" />
     <Compile Include="Models\MySessionObject.cs" />
     <Compile Include="Models\PaddPassword.cs" />
     <Compile Include="Models\PhotoResize.cs" />
+    <Compile Include="Models\PrintResultSenoir.cs" />
     <Compile Include="Models\PrintResult.cs" />
     <Compile Include="Models\ReadExcelFile.cs" />
     <Compile Include="Models\ReadResultExcelFile.cs" />
@@ -246,6 +249,7 @@
     <Compile Include="Models\RoleActivityData.cs" />
     <Compile Include="Models\RoleViewModel.cs" />
     <Compile Include="Models\SessionHelper.cs" />
+    <Compile Include="Models\StructureSecondarySchoolResult.cs" />
     <Compile Include="Models\TimeTable.cs" />
     <Compile Include="Models\TimeTableCollisionAviodance.cs" />
     <Compile Include="Models\Tweaker.cs" />
@@ -386,6 +390,7 @@
     <Content Include="Images\orderedList8.png" />
     <Content Include="Images\orderedList9.png" />
     <Content Include="Images\peenet.jpg" />
+    <Content Include="Images\sildaleresultlogo.jpg" />
     <Content Include="Images\silverdale.jpg" />
     <Content Include="Images\storekalone.gif" />
     <Content Include="Images\studystudents.jpg" />

@@ -11,6 +11,7 @@ namespace SilverDaleSchools.Model
     {
         public int ResultID { get; set; }
 
+      //  public string ClassUploaded { get; set; }
         [Required]
         public string StudentNo { get; set; }
 

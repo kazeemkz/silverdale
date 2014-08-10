@@ -44,6 +44,41 @@ namespace SilverDaleSchools.Model
         //  {"NO","False"},
 
         //};
+
+
+        public static SelectList ClasssListSilverDale
+        {
+            get { return new SelectList(ClasssSivler, "Value", "Key"); }
+        }
+
+        private static readonly IDictionary<string, string> ClasssSivler = new Dictionary<string, string> 
+      
+       { {"Choose",""},
+         {"BASIC 7","BASIC 7"},
+           {"BASIC 8","BASIC 8"},
+             {"BASIC 9","BASIC 9"},
+               {"BASIC 10","BASIC 10"},
+                 {"BASIC 11","BASIC 11"},
+                   {"BASIC 12","BASIC 12"},
+        // {"Senior Class","Senior Class"},
+           //{"Owing","Owing"},
+                     
+       };
+
+
+        public static SelectList ClasssDescriptiontList
+        {
+            get { return new SelectList(ClasssDescription, "Value", "Key"); }
+        }
+
+        private static readonly IDictionary<string, string> ClasssDescription = new Dictionary<string, string> 
+      
+       { {"Choose",""},
+         {"Junior Class","Junior Class"},
+         {"Senior Class","Senior Class"},
+           //{"Owing","Owing"},
+                     
+       };
         public static SelectList SchoolFeesPaymentList
         {
             get { return new SelectList(SchoolFeesPayment, "Value", "Key"); }

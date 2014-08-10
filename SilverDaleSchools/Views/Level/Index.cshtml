@@ -7,8 +7,8 @@
 <h5>LIST OF CLASSES AND THIER ARMS</h5>
 
 @*<p id="button4">
-    @Html.ActionLink("Create New", "Create")
-</p>*@
+        @Html.ActionLink("Create New", "Create")
+    </p>*@
 
 @using (Html.BeginForm())
 {
@@ -29,7 +29,7 @@
                 </td>
             </tr>
 
-        
+
         </table>
         <input type="submit" value="Search" id="button" class="btn-primary" />
         <br />
@@ -37,46 +37,55 @@
 }
 <fieldset>
     <legend>@ViewBag.Count Records Found</legend>
-<table class="table table-striped table-hover table-bordered table-condensed">
-    <tr>
-        <th>
-          <b>Class Name</b>
-        </th>
-        @*<th><b>Arm</b>
-        </th>*@
-        <th></th>
-        <th></th>
-       
-    </tr>
-
-    @foreach (var item in Model)
-    {
+    <table class="table table-striped table-hover table-bordered table-condensed">
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.LevelName)
-            </td>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.Type)
-            </td>*@
-            <td>
-                 @Html.ActionLink("Edit", "Edit", new { id = SilverDaleSchools.Models.Encript.EncryptString(item.LevelID .ToString(),true)}, null)
-               @* @Html.ActionLink("Edit", "Edit", new { id = item.LevelID })*@
-            </td>
-          @*  <td>
-                @Html.ActionLink("Details", "Details", new { id = item.LevelID })
-            </td>*@
-            <td>
-                 @Html.ActionLink("Delete", "Delete", new { id = SilverDaleSchools.Models.Encript.EncryptString(item.LevelID.ToString(), true) }, null)
-@*                @Html.ActionLink("Delete", "Delete", new { id = item.LevelID })*@
-            </td>
+            <th>
+                <b>Class Name</b>
+            </th>
+            <th>
+                <b>Arm</b>
+            </th>
+            @*<th>
+                <b>Class Description</b>
+            </th>*@
+            <th></th>
+            <th></th>
 
         </tr>
-    }
-</table>
-    </fieldset>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LevelName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+
+                @*<td>
+                    @Html.DisplayFor(modelItem => item.ClassDescription)
+                </td>*@
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = SilverDaleSchools.Models.Encript.EncryptString(item.LevelID.ToString(), true) }, null)
+                    @* @Html.ActionLink("Edit", "Edit", new { id = item.LevelID })*@
+                </td>
+                @*  <td>
+                        @Html.ActionLink("Details", "Details", new { id = item.LevelID })
+                    </td>*@
+                <td>
+                    @Html.ActionLink("Delete", "Delete", new { id = SilverDaleSchools.Models.Encript.EncryptString(item.LevelID.ToString(), true) }, null)
+                    @*                @Html.ActionLink("Delete", "Delete", new { id = item.LevelID })*@
+                </td>
+
+            </tr>
+        }
+    </table>
+</fieldset>
 <table>
     <tr>
-        <td>Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber)
+        <td>
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber)
             of @Model.PageCount
             &nbsp;
         </td>
@@ -92,36 +101,39 @@
         }
         else
         {
-            <td><<
+            <td>
+                <<
             </td>
             <td>
                 @Html.Raw("&nbsp;")
-        < Prev
+                < Prev
             </td>
         }
         &nbsp;
-    @if (Model.HasNextPage)
-    {
-        <td>
-            @Html.ActionLink("Next >", "Index", new { page = Model.PageNumber + 1, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })
-        </td>
-        <td>
-            @Html.Raw("&nbsp;")
-        </td>
-        <td>
-            @Html.ActionLink(">>", "Index", new { page = Model.PageCount, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })
-        </td>
-    }
-    else
-    {
-        <td>Next >
-        </td>
-        <td>
-            @Html.Raw("&nbsp;")
-        </td>
-        <td>>>
-        </td>
-    }
+        @if (Model.HasNextPage)
+        {
+            <td>
+                @Html.ActionLink("Next >", "Index", new { page = Model.PageNumber + 1, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })
+            </td>
+            <td>
+                @Html.Raw("&nbsp;")
+            </td>
+            <td>
+                @Html.ActionLink(">>", "Index", new { page = Model.PageCount, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })
+            </td>
+        }
+        else
+        {
+            <td>
+                Next >
+            </td>
+            <td>
+                @Html.Raw("&nbsp;")
+            </td>
+            <td>
+                >>
+            </td>
+        }
     </tr>
 </table>
 @section Scripts {

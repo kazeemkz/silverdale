@@ -1,639 +1,1966 @@
-﻿//using iTextSharp.text;
-//using iTextSharp.text.pdf;
+﻿using iTextSharp.text;
+using iTextSharp.text.pdf;
+using SilverDaleSchools.DAL;
+using SilverDaleSchools.Model;
 //using SilverDaleSchools.DAL;
-//using SilverDaleSchools.Model;
-////using SilverDaleSchools.DAL;
-//using System;
-//using System.Collections.Generic;
-//using System.Drawing;
-//using System.IO;
-//using System.Linq;
-//using System.Text;
-//using System.Web;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Web;
 
-//namespace SilverDaleSchools.Models
-//{
-//    public class PrintResult
-//    {
-//        UnitOfWork work = new UnitOfWork();
-        
-//        //do for primary school
-//        public Document PrinttheResultPrimary(string studentName, string Term, string studentLevel, ref StringWriter sw, ref Document itextDoc)
-//        //public StringWriter PrinttheResultPrimary(string studentName, string Term, string studentLevel, ref StringWriter sw, ref Document itextDoc)
-//        {
-//            PdfPTable table = new PdfPTable(8);
-//            iTextSharp.text.Font fntTableFontHdr = FontFactory.GetFont("Arial", 8, iTextSharp.text.Font.BOLD, BaseColor.BLACK);
-
-//            PdfPCell CellZero = new PdfPCell(new Phrase("ZERO", fntTableFontHdr));
-//            CellZero.Rotation = -90;
-//            CellZero.Rowspan = 3;
-//            CellZero.VerticalAlignment = Element.ALIGN_TOP;
-//            CellZero.HorizontalAlignment = Element.ALIGN_CENTER;
-
-
-//            table.AddCell("SUBJECT");
-//            table.AddCell("ASSESSMENT(40%)");
-//            table.AddCell("EXAM(60%)");
-//            table.AddCell("TOTAL(100%)");
-//            table.AddCell("CLASS AVE.");
-//            table.AddCell("GRADE");
-//            table.AddCell("BEHAVIOR");
-//            table.AddCell("SIGNATURE");
-//            //  itextDoc.Add(table);
-//            Int32 studentUserID = Convert.ToInt32(studentName);
+namespace SilverDaleSchools.Models
+{
+    public class PrintResult
+    {
+        UnitOfWork work = new UnitOfWork();
+        public Document PrintSilverDaleResult(Result theResult, ref StringWriter sw, ref Document itextDoc)
+        {
 
-//            Person thePerson = work.PersonRepository.Get(a => a.UserID == studentUserID).First();
-//            List<String> theResultList = new List<string>();
+            //  itextDoc.NewPage();
+            PdfPTable table3 = new PdfPTable(2);
 
+            table3.HorizontalAlignment = 0;
+            table3.TotalWidth = 500f;
+            table3.LockedWidth = true;
+            float[] widths = new float[] { 100f, 400f };
+            table3.SetWidths(widths);
 
-//            int studentID = thePerson.PersonID;
-
-
-//            if (thePerson is PrimarySchoolStudent)
-//            {
-
-//                //  tsw.WriteLine();
-//                PrimarySchoolStudent thePrimarySchoolStudent = work.PrimarySchoolStudentRepository.GetByID(studentID);
-//                int thePrimarySchoolUserID = thePerson.UserID;
-//                string theLevelType = thePrimarySchoolStudent.LevelType;
+            table3.DefaultCell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+            iTextSharp.text.Image imgPDF = iTextSharp.text.Image.GetInstance(HttpRuntime.AppDomainAppPath + "\\Images\\sildaleresultlogo.jpg");
+            imgPDF.ScaleToFit(70, 70);
 
 
-//                //StringWriter sw = new StringWriter(,);
-
-//                //get the list of students in the class
-
-//                List<PrimarySchoolStudent> theSecondarySchoolinSameClass = work.PrimarySchoolStudentRepository.Get(a => a.LevelType == theLevelType).ToList();
-//                // theSecondarySchoolinSameClass.Remove(theSecondarySchoolStudent);
-//                List<SubjectRegistration> theRegisteredSubjectLists = work.SubjectRegistrationRepository.Get(a => a.Level == studentLevel).ToList();
-
-//                SubjectRegistration theRealSub = theRegisteredSubjectLists[0];
-
-//                //get the registered classes for this guy
-//                SubjectRegistration SubjectRegistrationToUpdate1 = work.SubjectRegistrationRepository.GetByID(theRealSub.SubjectRegistrationID);
-
-
-//                ResultModel theResultModel = new ResultModel();
-//                theResultModel.TheClassGrades = new List<decimal>();
-//                List<decimal> theScoreList = new List<decimal>();
-
-//                int theCounterForPosition = 0;
-//                decimal FinalExamScoreForOverallMark = 0;
-
 
-//                // get all the score of each student in all registered courses
-//                foreach (var eachStudent in theSecondarySchoolinSameClass)
-//                {
-//                    decimal totalScoreAddition = 0;
-//                    theCounterForPosition++;
-//                    foreach (var subject in SubjectRegistrationToUpdate1.Subjects)
-//                    {
-
-
-//                        List<Exam2> RestOfStudentExamScore2 = work.Exam2Repository.Get(a => a.Term == Term && a.Level == studentLevel && a.StudentCode == eachStudent.UserID && a.SubjectName == subject.Name).ToList();
-//                        List<Exam1> RestOfStudentExamScore1 = work.Exam1Repository.Get(a => a.Term == Term && a.Level == studentLevel && a.StudentCode == eachStudent.UserID && a.SubjectName == subject.Name).ToList();
-//                        List<Exam> RestOfStudentExamScore = work.ExamRepository.Get(a => a.Term == Term && a.Level == studentLevel && a.StudentCode == eachStudent.UserID && a.SubjectName == subject.Name).ToList();
+            //   PdfPTable table = new PdfPTable(10);
 
 
-
-//                        if (RestOfStudentExamScore2.Count > 0)
-//                        {
-//                            if (RestOfStudentExamScore2[0].FirstCA + RestOfStudentExamScore2[0].SecondCA + +RestOfStudentExamScore2[0].SubjectExam > 0)
-//                            {
-//                                //  theCounter++;
-
-//                                totalScoreAddition = RestOfStudentExamScore2[0].FirstCA + RestOfStudentExamScore2[0].SecondCA + RestOfStudentExamScore2[0].SubjectExam + totalScoreAddition;
-//                                RestOfStudentExamScore2 = work.Exam2Repository.Get(a => a.Term == Term && a.Level == studentLevel && a.StudentCode == eachStudent.UserID && a.SubjectName == subject.Name).ToList();
-
-//                                //  theResultModel.ClassAverage = RestOfStudentExamScore2[0].FirstCA + RestOfStudentExamScore2[0].SecondCA + +RestOfStudentExamScore2[0].SubjectExam + theResultModel.ClassAverage;
-//                                // theResultModel.
-//                            }
-//                        }
-//                        else
-
-//                            if (RestOfStudentExamScore1.Count > 0)
-//                            {
-//                                if (RestOfStudentExamScore1[0].FirstCA + RestOfStudentExamScore1[0].SecondCA + RestOfStudentExamScore1[0].SubjectExam > 0)
-//                                {
-//                                    // theCounter++;
-//                                    // theCounterForPosition++;
-//                                    totalScoreAddition = RestOfStudentExamScore1[0].FirstCA + RestOfStudentExamScore1[0].SecondCA + +RestOfStudentExamScore1[0].SubjectExam + totalScoreAddition;
-//                                    //  theResultModel.ClassAverage = RestOfStudentExamScore1[0].FirstCA + RestOfStudentExamScore1[0].SecondCA + +RestOfStudentExamScore1[0].SubjectExam + theResultModel.ClassAverage;
-//                                    //theResultModel.
-//                                }
-//                            }
-
-//                            else if (RestOfStudentExamScore.Count > 0)
-//                            {
-//                                if (RestOfStudentExamScore[0].FirstCA + RestOfStudentExamScore[0].SecondCA + RestOfStudentExamScore[0].SubjectExam > 0)
-//                                {
-//                                    // theCounter++;
-//                                    // theCounterForPosition++;
-//                                    totalScoreAddition = RestOfStudentExamScore[0].FirstCA + RestOfStudentExamScore[0].SecondCA + +RestOfStudentExamScore[0].SubjectExam + totalScoreAddition;
-
-//                                    //  theResultModel.ClassAverage = RestOfStudentExamScore[0].FirstCA + RestOfStudentExamScore[0].SecondCA + +RestOfStudentExamScore[0].SubjectExam + theResultModel.ClassAverage;
-//                                }
-//                            }
-
-
-//                    }
-//                    theResultModel.TheClassGrades.Add(Math.Round(totalScoreAddition, 2));
-
-//                }
-
-
-//                //lets get the total score of the student in question
-//                decimal theStudentInQuestionQuolation = 0;
-//                foreach (var sub in SubjectRegistrationToUpdate1.Subjects)
-//                {
-//                    List<Exam2> ExamScoreTwo = work.Exam2Repository.Get(a => a.Term == Term && a.Level == studentLevel && a.StudentCode == thePrimarySchoolUserID && a.SubjectName == sub.Name).ToList();
-//                    List<Exam1> ExamScoreOne = work.Exam1Repository.Get(a => a.Term == Term && a.Level == studentLevel && a.StudentCode == thePrimarySchoolUserID && a.SubjectName == sub.Name).ToList();
-//                    List<Exam> ExamScoreDefault = work.ExamRepository.Get(a => a.Term == Term && a.Level == studentLevel && a.StudentCode == thePrimarySchoolUserID && a.SubjectName == sub.Name).ToList();
-
-//                    if (ExamScoreTwo.Count > 0)
-//                    {
-
-
-//                        theStudentInQuestionQuolation = ExamScoreTwo[0].FirstCA + ExamScoreTwo[0].SecondCA + ExamScoreTwo[0].SubjectExam + theStudentInQuestionQuolation;
-//                        // theResultModel.ClassAverage = theResultModel.ClassAverage + ExamScore1+
-//                    }
-//                    else if (ExamScoreOne.Count > 0)
-//                    {
-//                        theStudentInQuestionQuolation = ExamScoreOne[0].FirstCA + ExamScoreOne[0].SecondCA + ExamScoreOne[0].SubjectExam + theStudentInQuestionQuolation;
-//                        //theResultModel.FirstCA = ExamScore1[0].FirstCA;
-//                        //theResultModel.SecondCA = ExamScore1[0].SecondCA;
-//                        //theResultModel.Exam = ExamScore1[0].SubjectExam;
-//                        //ExamScore1 = work.Exam1Repository.Get(a => a.Term == Term && a.Level == studentLevel && a.StudentCode == theSecondarySchoolUserID && a.SubjectName == subject.Name).ToList();
-//                    }
-
-//                    else if (ExamScoreDefault.Count > 0)
-//                    {
-//                        theStudentInQuestionQuolation = ExamScoreDefault[0].FirstCA + ExamScoreDefault[0].SecondCA + ExamScoreDefault[0].SubjectExam + theStudentInQuestionQuolation;
-
-//                        //theResultModel.FirstCA = ExamScore[0].FirstCA;
-//                        //theResultModel.SecondCA = ExamScore[0].SecondCA;
-//                        //theResultModel.Exam = ExamScore[0].SubjectExam;
-//                    }
-//                }
-
-
-//                theStudentInQuestionQuolation = Math.Round(theStudentInQuestionQuolation, 2);
 
-
-//                //
-//                foreach (var subject in SubjectRegistrationToUpdate1.Subjects)
-//                {
-//                    int theCounter = 0;
-
-//                    theResultModel.ClassAverage = 0;
-//                    theResultModel.FirstCA = 0;// ExamScore[0].FirstCA;
-//                    theResultModel.SecondCA = 0;// ExamScore[0].SecondCA;
-//                    theResultModel.Exam = 0;
-
-//                    //theResultModel.
-
-//                    //theResultModel.TheClassGrades = new List<decimal>();
-//                    theResultModel.Subject = subject.Name;
-//                    //get all the students who sat for the same subject
-
-//                    foreach (var eachStudent in theSecondarySchoolinSameClass)
-//                    {
-//                        //firstCheckExamtwo
-//                        // theResultModel.TheClassGrades = new List<decimal>();
-//                        List<Exam2> RestOfStudentExamScore2 = work.Exam2Repository.Get(a => a.Term == Term && a.Level == studentLevel && a.StudentCode == eachStudent.UserID && a.SubjectName == subject.Name).ToList();
-//                        //List<Exam1> RestOfStudentExamScore1 = new List<Exam1>();
-//                        //List<Exam> RestOfStudentExamScore = new List<Exam>();
-//                        List<Exam1> RestOfStudentExamScore1 = work.Exam1Repository.Get(a => a.Term == Term && a.Level == studentLevel && a.StudentCode == eachStudent.UserID && a.SubjectName == subject.Name).ToList();
-//                        List<Exam> RestOfStudentExamScore = work.ExamRepository.Get(a => a.Term == Term && a.Level == studentLevel && a.StudentCode == eachStudent.UserID && a.SubjectName == subject.Name).ToList();
 
 
 
-//                        if (RestOfStudentExamScore2.Count > 0)
-//                        {
-//                            if (RestOfStudentExamScore2[0].FirstCA + RestOfStudentExamScore2[0].SecondCA + +RestOfStudentExamScore2[0].SubjectExam > 0)
-//                            {
-//                                theCounter++;
-//                                //theCounterForPosition++;
-//                                // theResultModel.TheClassGrades.Add(RestOfStudentExamScore2[0].FirstCA + RestOfStudentExamScore2[0].SecondCA + +RestOfStudentExamScore2[0].SubjectExam);
-//                                RestOfStudentExamScore2 = work.Exam2Repository.Get(a => a.Term == Term && a.Level == studentLevel && a.StudentCode == eachStudent.UserID && a.SubjectName == subject.Name).ToList();
 
-//                                theResultModel.ClassAverage = RestOfStudentExamScore2[0].FirstCA + RestOfStudentExamScore2[0].SecondCA + +RestOfStudentExamScore2[0].SubjectExam + theResultModel.ClassAverage;
-//                                // theResultModel.
-//                            }
-//                        }
-//                        else
 
-//                            if (RestOfStudentExamScore1.Count > 0)
-//                            {
-//                                if (RestOfStudentExamScore1[0].FirstCA + RestOfStudentExamScore1[0].SecondCA + +RestOfStudentExamScore1[0].SubjectExam > 0)
-//                                {
-//                                    theCounter++;
-//                                    // theCounterForPosition++;
-//                                    // theResultModel.TheClassGrades.Add(RestOfStudentExamScore1[0].FirstCA + RestOfStudentExamScore1[0].SecondCA + +RestOfStudentExamScore1[0].SubjectExam);
-//                                    theResultModel.ClassAverage = RestOfStudentExamScore1[0].FirstCA + RestOfStudentExamScore1[0].SecondCA + +RestOfStudentExamScore1[0].SubjectExam + theResultModel.ClassAverage;
-//                                    //theResultModel.
-//                                }
-//                            }
 
-//                            else if (RestOfStudentExamScore.Count > 0)
-//                            {
-//                                if (RestOfStudentExamScore[0].FirstCA + RestOfStudentExamScore[0].SecondCA + RestOfStudentExamScore[0].SubjectExam > 0)
-//                                {
-//                                    theCounter++;
-//                                    //theCounterForPosition++;
-//                                    // theResultModel.TheClassGrades.Add(RestOfStudentExamScore[0].FirstCA + RestOfStudentExamScore[0].SecondCA + RestOfStudentExamScore[0].SubjectExam);
 
-//                                    theResultModel.ClassAverage = RestOfStudentExamScore[0].FirstCA + RestOfStudentExamScore[0].SecondCA + +RestOfStudentExamScore[0].SubjectExam + theResultModel.ClassAverage;
-//                                }
-//                            }
 
+            PdfPCell theImage = new PdfPCell(imgPDF);
+            //  theImage.Width = 2;
+            theImage.Border = iTextSharp.text.Rectangle.NO_BORDER;
+            table3.AddCell(theImage);
 
-//                    }
+            iTextSharp.text.Font font_heading_1 = FontFactory.GetFont(FontFactory.TIMES_ROMAN, 16, iTextSharp.text.Font.BOLD);
 
+            iTextSharp.text.Font font_heading_2 = FontFactory.GetFont(FontFactory.TIMES_ROMAN, 7, iTextSharp.text.Font.BOLD);
+            iTextSharp.text.Font font_heading_3 = FontFactory.GetFont(FontFactory.TIMES_ROMAN, 8, iTextSharp.text.Font.BOLD);
 
+            iTextSharp.text.Font font_heading_4 = FontFactory.GetFont(FontFactory.TIMES_ROMAN, 9, iTextSharp.text.Font.BOLD);
 
+            PdfPTable theSchoolNameTable = new PdfPTable(1);
 
+            PdfPCell theWexFord = new PdfPCell(new Paragraph("SILVERDALE JUNIOR HIGH SCHOOL", font_heading_1));
+            theWexFord.Border = iTextSharp.text.Rectangle.NO_BORDER;
+            // theWexFord.w
 
-//                    //firstCheckExamtwo
-//                    List<Exam2> ExamScore2 = work.Exam2Repository.Get(a => a.Term == Term && a.Level == studentLevel && a.StudentCode == thePrimarySchoolUserID && a.SubjectName == subject.Name).ToList();
-//                    List<Exam1> ExamScore1 = ExamScore1 = work.Exam1Repository.Get(a => a.Term == Term && a.Level == studentLevel && a.StudentCode == thePrimarySchoolUserID && a.SubjectName == subject.Name).ToList(); ;
-//                    List<Exam> ExamScore = work.ExamRepository.Get(a => a.Term == Term && a.Level == studentLevel && a.StudentCode == thePrimarySchoolUserID && a.SubjectName == subject.Name).ToList(); ;
-
-//                    decimal theCurrentStudentScore = 0;
-//                    theResultModel.LastTerm = "    ";
-//                    //Check out for last term
-//                    int theTerm = Convert.ToInt16(Term);
-
-//                    // theResultModel.ClassAverage
-
-//                    //check thru the student in question scores for all the exams
-
-
-
-//                    if (ExamScore2.Count > 0)
-//                    {
-
-//                        theResultModel.FirstCA = ExamScore2[0].FirstCA;
-//                        theResultModel.SecondCA = ExamScore2[0].SecondCA;
-//                        theResultModel.Exam = ExamScore2[0].SubjectExam;
-
-//                        // theResultModel.ClassAverage = theResultModel.ClassAverage + ExamScore1+
-//                    }
-//                    else if (ExamScore1.Count > 0)
-//                    {
-
-//                        theResultModel.FirstCA = ExamScore1[0].FirstCA;
-//                        theResultModel.SecondCA = ExamScore1[0].SecondCA;
-//                        theResultModel.Exam = ExamScore1[0].SubjectExam;
-//                        //ExamScore1 = work.Exam1Repository.Get(a => a.Term == Term && a.Level == studentLevel && a.StudentCode == theSecondarySchoolUserID && a.SubjectName == subject.Name).ToList();
-//                    }
-
-//                    else if (ExamScore.Count > 0)
-//                    {
-
-//                        theResultModel.FirstCA = ExamScore[0].FirstCA;
-//                        theResultModel.SecondCA = ExamScore[0].SecondCA;
-//                        theResultModel.Exam = ExamScore[0].SubjectExam;
-//                    }
-
-
+            PdfPCell theWexFordFirstGate = new PdfPCell(new Paragraph(new Paragraph("4 AKINRINLO STREET, OFF ALIMOSHO ROAD, IYANA-IPAJA, LAGOS", font_heading_3)));
+            theWexFordFirstGate.Border = iTextSharp.text.Rectangle.NO_BORDER;
 
-//                    decimal theLastTermInt = 0;
-//                    decimal FinalExamScore = theResultModel.Exam + theResultModel.FirstCA + theResultModel.SecondCA;
-//                    FinalExamScoreForOverallMark = theResultModel.Exam + theResultModel.FirstCA + theResultModel.SecondCA + FinalExamScoreForOverallMark;
-
-//                    // theResultModel.TheClassGrades;//.Sort();
-
-
-
+            PdfPCell theWexFordMoto = new PdfPCell(new Paragraph("Website:www.silverdaleschoolslagos.com  Email: info@silverdaleschoolslagos.com", font_heading_3));
+            theWexFordMoto.Border = iTextSharp.text.Rectangle.NO_BORDER;
 
-
-//                    //if (String.IsNullOrEmpty(theResultModel.LastTerm))
-//                    if (theResultModel.LastTerm == "    ")
-//                    {
-//                        theLastTermInt = 0;
-//                    }
-//                    else
-//                    {
-//                        theLastTermInt = Convert.ToDecimal(theResultModel.LastTerm);
-//                    }
-
-//                    if (FinalExamScore > 70)
-//                    {
-//                        theResultModel.Grade = "A";
-//                    }
-
-//                    if (FinalExamScore >= 60 && FinalExamScore <= 69)
-//                    {
-//                        theResultModel.Grade = "B";
-//                    }
-
-//                    if (FinalExamScore >= 50 && FinalExamScore <= 59)
-//                    {
-//                        theResultModel.Grade = "C";
-//                    }
-
-//                    if (FinalExamScore >= 45 && FinalExamScore <= 49)
-//                    {
-//                        theResultModel.Grade = "D";
-//                    }
-
-//                    if (FinalExamScore >= 40 && FinalExamScore <= 44)
-//                    {
-//                        theResultModel.Grade = "E";
-//                    }
-
-//                    if (FinalExamScore <= 39)
-//                    {
-//                        theResultModel.Grade = "F";
-//                    }
-
-//                    string theResultModelSubject = new Approximation().ShortenSubjectName(theResultModel.Subject);
-//                    string[] theSubjecter = theResultModelSubject.Split(' ');
-//                    StringBuilder theString = new StringBuilder();
-//                    // trim the subject name
-//                    string theSubjectName = null;
-//                    if (theSubjecter.Count() > 1)
-//                    {
-//                        int Counter = theSubjecter.Count();
-//                        int tracker = 0;
-//                        foreach (string s in theSubjecter)
-//                        {
-//                            tracker = tracker + 1;
-//                            theSubjecter.Count();
-//                            theString.Append(s);
-//                            if (tracker < Counter)
-//                            {
-//                                theString.Append("_");
-//                            }
-//                        }
-//                        theSubjectName = Convert.ToString(theString);// theResultModelSubject.Substring(0, 16);
-//                    }
-//                    else
-//                    {
-//                        theSubjectName = theResultModelSubject;
-//                    }
-
-//                    //  BaseFont bfTimes = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, false);
-
-//                    //iTextSharp.text.Font times = new iTextSharp.text.Font(bfTimes, 12, iTextSharp.text.Font.ITALIC,BaseColor.RED);
-
-
-
-//                    if (FinalExamScore > 0)
-//                    {
-//                        theResultList.Add(theSubjectName + " " + new Approximation().ApproximationMethod(theResultModel.FirstCA + theResultModel.SecondCA) + " " + new Approximation().ApproximationMethod(theResultModel.Exam) + " " + new Approximation().ApproximationMethod(FinalExamScore) + " " + new Approximation().ApproximationMethod(theResultModel.ClassAverage / theCounter) + " " + theResultModel.Grade);
-//                        //  theResultList.Add("    "+theSubjectName +"      "+ new Approximation().ApproximationMethod(theResultModel.FirstCA + theResultModel.SecondCA) + "                       " + new Approximation().ApproximationMethod(theResultModel.Exam) + "                       " + new Approximation().ApproximationMethod(FinalExamScore) + "                       " + new Approximation().ApproximationMethod(theResultModel.ClassAverage / theCounter) + "                       " + theResultModel.Grade);
-//                        // sw.WriteLine(theSubjectName + new Approximation().ApproximationMethod(theResultModel.FirstCA) + " " + new Approximation().ApproximationMethod(theResultModel.SecondCA) + " " + new Approximation().ApproximationMethod(theResultModel.Exam) + "  " + new Approximation().ApproximationMethod(FinalExamScore) + "  " + new Approximation().ApproximationMethodString(theResultModel.LastTerm) + "   " + new Approximation().ApproximationMethod2((FinalExamScore + theLastTermInt)) + "  " + new Approximation().ApproximationMethod(theResultModel.ClassAverage / theCounter) + "  " + theResultModel.Position + "     " + theResultModel.Grade);
-//                        // sw.WriteLine(" ");
-
-//                        theResultList.Add("");
-
-
-//                        //tsw.Close();
-//                    }
-//                }
-
-
-//                //write it hear
-
-//                foreach (var thegrade in theResultModel.TheClassGrades)
-//                {
-//                    theScoreList.Add(thegrade);
-//                }
-
-//                theResultModel.TheClassGrades.Sort();
-//                theResultModel.TheClassGrades.Reverse();
-//                //sort the list to find the position
-
-//                int theCount = 0;
-//                foreach (var grade in theResultModel.TheClassGrades)
-//                {
-//                    if (grade == theStudentInQuestionQuolation)
-//                    {
-//                        theCount = theCount + 1;
-//                        break;
-//                    }
-//                    else
-//                    {
-//                        theCount = theCount + 1;
-//                    }
-//                    // theGradeList.Add(thegrade);
-//                }
-
-//                theResultModel.Position = theCount;
-
-//                decimal theTotalAverageScore = 0;
-//                decimal theTotalScore = 0;
-
-//                //Total Average Score
-//                foreach (var grade in theResultModel.TheClassGrades)
-//                {
-//                    theTotalScore = theTotalScore + grade;
-//                    // theGradeList.Add(thegrade);
-//                }
-
-//                theTotalAverageScore = Math.Round((theTotalScore / theCounterForPosition), 2);
-//                string theTerms = "";
-//                if (Term == "1")
-//                {
-//                    theTerms = "First";
-//                }
-//                if (Term == "2")
-//                {
-//                    theTerms = "Second";
-//                }
-//                if (Term == "3")
-//                {
-//                    theTerms = "Third";
-//                }
-
-
-//                PdfPTable table1 = new PdfPTable(2);
-//                table1.DefaultCell.Border = iTextSharp.text.Rectangle.NO_BORDER;
-//                iTextSharp.text.Image imgPDF = iTextSharp.text.Image.GetInstance(HttpRuntime.AppDomainAppPath + "\\Images\\learningforLife.jpg");
-//                imgPDF.ScaleToFit(128, 100);
-//                PdfPCell thec = new PdfPCell(imgPDF);
-//                thec.Border = iTextSharp.text.Rectangle.NO_BORDER;
-//                table1.AddCell(thec);
-
-//                iTextSharp.text.Font font_heading_1 = FontFactory.GetFont(FontFactory.TIMES_ROMAN, 19, iTextSharp.text.Font.BOLD);
-//                table1.AddCell(new Paragraph("LEARNING FOR LIFE SCHOOLS", font_heading_1));
-//                table1.AddCell("  ");
-//                table1.AddCell(new Paragraph("Plot 4 Adelakun Alake Rd, Wema Bank,   "));
-//                table1.AddCell(new Paragraph("   "));
-//                table1.AddCell(new Paragraph("Satelite Town, Lagos State. Nigeria  "));
-//                table1.AddCell(new Paragraph("   "));
-
-//                itextDoc.Add(table1);
-
-//                itextDoc.Add(new Paragraph("                                                                                        REPORT SHEET            ", font_heading_1));
-
-//                itextDoc.Add(new Paragraph("   "));
-
-//                string personInfo = "                                NAME (SURNAME FIRST):  " + thePerson.LastName.ToUpper() + "        " + thePerson.FirstName.ToUpper() + "       " + thePerson.Middle.ToUpper();
-//                itextDoc.Add(new Paragraph(personInfo));
-//                string sex = "                                SEX: " + thePerson.Sex + "        TERM: " + theTerms;
-//                itextDoc.Add(new Paragraph(sex));
-//                string theClass = "                                CLASS: " + theLevelType + ". NUMBER IN CLASS :" + theCounterForPosition;
-//                itextDoc.Add(new Paragraph(theClass));
-//                string score = "                                TOTAL AVERAGE SCORE :" + theTotalAverageScore + "      POSITION/GRADE    :" + theCount;
-//                itextDoc.Add(new Paragraph(score));
-
-//                itextDoc.Add(new Paragraph("   "));
-//                itextDoc.Add(new Paragraph("   "));
-
-//                BaseFont bfTimes = BaseFont.CreateFont(FontFactory.TIMES_ROMAN, BaseFont.CP1252, false);
-//                //   iTextSharp.text.Font font_heading_1 = FontFactory.GetFont(FontFactory.TIMES_ROMAN, 19, iTextSharp.text.Font.BOLD);
-
-//                iTextSharp.text.Font times = new iTextSharp.text.Font(bfTimes, 12, iTextSharp.text.Font.NORMAL, BaseColor.RED);
-
-//                foreach (var s in theResultList)
-//                {
-//                    if (s.Count() != 0)
-//                    {
-
-//                        string[] values = s.Split(' ');
-//                        string f = values[5];
-//                        // if (f == "F")
-//                        // {
-//                        table.AddCell(values[0]);
-//                        table.AddCell(values[1]);
-//                        table.AddCell(values[2]);
-//                        string theA = new Approximation().ApproximationMethod(Convert.ToDecimal(values[3]));
-//                        decimal theReal = Convert.ToDecimal(theA);
-//                        if (theReal <= 39)
-//                        {
-//                            PdfPCell cellExam = new PdfPCell(new Phrase(values[3], times));
-//                            table.AddCell(cellExam);
-//                        }
-//                        else
-//                        {
-//                            table.AddCell(values[3]);
-//                        }
-//                        table.AddCell(values[4]);
-//                        if (f == "F")
-//                        {
-//                            PdfPCell cellGrade = new PdfPCell(new Phrase(values[5], times));
-//                            table.AddCell(cellGrade);
-//                        }
-//                        else
-//                        {
-//                            table.AddCell(values[5]);
-//                        }
-//                        table.AddCell("    ");
-//                        table.AddCell("    ");
-//                    }
-
-//                }
-
-//                itextDoc.Add(table);
-
-
-//            }
-//            // itextDoc.Add(new Paragraph("                                  ==============================================================================================================================="));
-//            itextDoc.Add(new Paragraph("   "));
-//            PdfPTable performance = new PdfPTable(1);
-//            performance.AddCell("**Indicate as applicable** GRADE: A = Excellent: B = Good: C = Average: D = Below  Average: E = Poor: F= Fail:");
-//            itextDoc.Add(new Paragraph("   "));
-//            itextDoc.Add((performance));
-//            itextDoc.Add(new Paragraph("   "));
-//            //PdfPTable performance = new PdfPTable(1);
-//            //performance.AddCell("PERFORMANCE(GRADE) ");
-//            //performance.AddCell("A – Excellent");
-//            //performance.AddCell("B – Very Good");
-//            //performance.AddCell("C – Good");
-//            //performance.AddCell("D – Fair");
-//            //performance.AddCell("E – Pass");
-//            //performance.AddCell("F – Fail ");
-//            //itextDoc.Add(performance);
-//            PdfPTable triats = new PdfPTable(8);
-
-//            triats.AddCell("PERSONAL TRAITS");
-//            triats.AddCell("5");
-//            triats.AddCell("4");
-//            triats.AddCell("3");
-//            triats.AddCell("2");
-//            triats.AddCell("1");
-//            triats.AddCell(" ");
-//            triats.AddCell("KEYS TO RATING");
-
-//            triats.AddCell("Neatness");
-//            triats.AddCell(" ");
-//            triats.AddCell(" ");
-//            triats.AddCell(" ");
-//            triats.AddCell(" ");
-//            triats.AddCell(" ");
-//            triats.AddCell("5");
-//            triats.AddCell("Maintains an excellent degree of observable traits.");
-
-//            triats.AddCell("Attentiveness");
-//            triats.AddCell(" ");
-//            triats.AddCell(" ");
-//            triats.AddCell(" ");
-//            triats.AddCell(" ");
-//            triats.AddCell(" ");
-//            triats.AddCell("4");
-//            triats.AddCell("Maintains a high degree of observable trait.");
-
-//            triats.AddCell("Punctuality");
-//            triats.AddCell(" ");
-//            triats.AddCell(" ");
-//            triats.AddCell(" ");
-//            triats.AddCell(" ");
-//            triats.AddCell(" ");
-//            triats.AddCell("3");
-//            triats.AddCell("Acceptable level of observable trait.");
-
-//            triats.AddCell("Self Control");
-//            triats.AddCell(" ");
-//            triats.AddCell(" ");
-//            triats.AddCell(" ");
-//            triats.AddCell(" ");
-//            triats.AddCell(" ");
-//            triats.AddCell("2");
-//            triats.AddCell("Shows minimal regard for observable traits.");
-
-//            triats.AddCell("Politeness");
-//            triats.AddCell(" ");
-//            triats.AddCell(" ");
-//            triats.AddCell(" ");
-//            triats.AddCell(" ");
-//            triats.AddCell(" ");
-//            triats.AddCell("1");
-//            triats.AddCell("Has no regard for observable trait.");
-
-//            itextDoc.Add(new Paragraph("   "));
-//            // itextDoc.Add(new Paragraph("                                  ==============================================================================================================================="));
-
-//            itextDoc.Add(triats);
-//            // itextDoc.Add(new Paragraph("                                  ==============================================================================================================================="));
-//            itextDoc.Add(new Paragraph("   "));
-//            PdfPTable term = new PdfPTable(2);
-//            term.AddCell("Resumption Date for Next Term:");
-//            term.AddCell(" ");
-//            term.AddCell(" Next Term Fees:");
-//            term.AddCell(" ");
-//            itextDoc.Add(term);
-
-//            itextDoc.Add(new Paragraph(" "));
-//            itextDoc.Add(new Paragraph(" "));
-//            itextDoc.Add(new Paragraph(" "));
-//            string teacherR = "                                 Teacher’s Remarks & Signature: ..............................................................................................................................................................................";
-//            itextDoc.Add(new Paragraph(teacherR));
-//            itextDoc.Add(new Paragraph("   "));
-//            itextDoc.Add(new Paragraph("   "));
-//            itextDoc.Add(new Paragraph("   "));
-//            itextDoc.Add(new Paragraph(""));
-//            itextDoc.Add(new Paragraph(""));
-//            string teacheprincipalR = "                                  Head Teacher’s Remarks & Signature:.............................................................................................................................................................................. ";
-//            itextDoc.Add(new Paragraph(teacheprincipalR));
-
-//            //  string theLevelType = thePerson.l
-
-//            // return sw;
-//            return itextDoc;
-
-//            //check for the student in exam2
-//        }
-//    }
-//}
+            theSchoolNameTable.AddCell(theWexFord);
+            theSchoolNameTable.AddCell(theWexFordFirstGate);
+            theSchoolNameTable.AddCell(theWexFordMoto);
+            table3.AddCell(theSchoolNameTable);
+
+
+
+            itextDoc.Add(table3);
+
+
+            string theTermValue = null;
+            if (theResult.Term == "1")
+            {
+                theTermValue = "FIRST TERM";
+                // itextDoc.Add(new Paragraph("                                                                                                             FIRST TERM", font_heading_4));
+            }
+
+            if (theResult.Term == "2")
+            {
+                theTermValue = "SECOND TERM";
+                // itextDoc.Add(new Paragraph("                                                                                                             SECOND TERM", font_heading_4));
+            }
+
+            if (theResult.Term == "3")
+            {
+                theTermValue = "THIRD TERM";
+                // itextDoc.Add(new Paragraph("                                                                                                             THIRD TERM", font_heading_4));
+            }
+
+            PdfPTable theTerm = new PdfPTable(3);
+
+            theTerm.HorizontalAlignment = 0;
+            theTerm.TotalWidth = 500f;
+            theTerm.LockedWidth = true;
+            float[] widthstheTerm = new float[] { 250f, 250f, 250f };
+            theTerm.SetWidths(widthstheTerm);
+            theTerm.DefaultCell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+            theTerm.AddCell(new Paragraph(new Paragraph("")));
+            theTerm.AddCell(new Paragraph(new Paragraph(theTermValue, font_heading_3)));
+            theTerm.AddCell(new Paragraph(new Paragraph("")));
+            itextDoc.Add(theTerm);
+
+
+
+
+            //term
+            PdfPTable name = new PdfPTable(2);
+
+            name.HorizontalAlignment = 0;
+            name.TotalWidth = 500f;
+            name.LockedWidth = true;
+            float[] widthsname = new float[] { 250f, 250f };
+            name.SetWidths(widthsname);
+
+            name.DefaultCell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+
+
+            name.AddCell(new Paragraph("STUDENT'S NAME:  " + theResult.Surname + " " + theResult.Firstname, font_heading_2));
+            name.AddCell(new Paragraph(""));
+            name.AddCell(new Paragraph(new Paragraph("DATE OF BIRTH ", font_heading_2)));
+            name.AddCell(new Paragraph(new Paragraph("SEX: " + theResult.Sex, font_heading_2)));
+            name.AddCell(new Paragraph(new Paragraph("CLASS: " + theResult.Class, font_heading_2)));
+            name.AddCell(new Paragraph(new Paragraph("SESSION: " + theResult.Session, font_heading_2)));
+
+
+            itextDoc.Add(name);
+
+            PdfPTable attendance = new PdfPTable(3);
+
+            attendance.HorizontalAlignment = 0;
+            attendance.TotalWidth = 500f;
+            attendance.LockedWidth = true;
+            float[] widthsattendance = new float[] { 250f, 250f, 250f };
+            attendance.SetWidths(widthsattendance);
+            attendance.DefaultCell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+            attendance.AddCell(new Paragraph(new Paragraph("")));
+            attendance.AddCell(new Paragraph(new Paragraph("1. ATTENDANCE", font_heading_3)));
+            attendance.AddCell(new Paragraph(new Paragraph("")));
+            itextDoc.Add(attendance);
+
+            PdfPTable attendanceopne = new PdfPTable(1);
+            attendanceopne.HorizontalAlignment = 0;
+            attendanceopne.TotalWidth = 500f;
+            attendanceopne.LockedWidth = true;
+            float[] widthsattendanceopne = new float[] { 500f };
+            attendanceopne.SetWidths(widthsattendanceopne);
+            attendanceopne.DefaultCell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+
+            attendanceopne.AddCell(new Paragraph(new Paragraph("NO. OF TIMES SCHOOL OPENED:  " + theResult.NoofTimesSchoolOpened, font_heading_2)));
+
+            attendanceopne.AddCell(new Paragraph(new Paragraph("NO. OF TIMES PRESENT:  " + theResult.NoofTimesPresent, font_heading_2)));
+            attendanceopne.AddCell(new Paragraph(new Paragraph("NO. OF TIMES PUNCTUAL:  " + theResult.NoofTimesPunctual, font_heading_2)));
+            attendanceopne.AddCell(new Paragraph(new Paragraph("NO. OF TIMES ABSENT:  " + theResult.NoofTimesAbsent, font_heading_2)));
+
+
+            itextDoc.Add(attendanceopne);
+
+
+
+            PdfPTable table = new PdfPTable(19);
+
+            table.TotalWidth = 700f;
+            table3.LockedWidth = true;
+            float[] widthstable = new float[] { 50f, 36f, 36f, 36f, 36f, 36f, 36f, 36f, 36f, 36f, 36f, 36f, 36f, 36f, 36f, 36f, 36f, 36f, 36f };
+            table.SetWidths(widthstable);
+
+            iTextSharp.text.Font fntTableFont = FontFactory.GetFont("Arial", 7, iTextSharp.text.Font.NORMAL, BaseColor.BLACK);
+
+            PdfPCell CellZero = new PdfPCell(new Phrase("", fntTableFont));
+            CellZero.Rotation = 90;
+            //  CellZero.BackgroundColor = Color.LightGray;
+            CellZero.Rowspan = 1;
+            CellZero.VerticalAlignment = Element.ALIGN_TOP;
+            CellZero.HorizontalAlignment = Element.ALIGN_CENTER;
+            table.AddCell(CellZero);
+
+            PdfPCell CellZero2 = new PdfPCell(new Phrase("Max Obtainable", fntTableFont));
+            CellZero2.Rotation = 90;
+            CellZero2.Rowspan = 1;
+            CellZero2.VerticalAlignment = Element.ALIGN_TOP;
+            CellZero2.HorizontalAlignment = Element.ALIGN_CENTER;
+            table.AddCell(CellZero2);
+
+
+            PdfPCell english = new PdfPCell(new Phrase("English Studies", fntTableFont));
+            english.Rotation = 90;
+            english.Rowspan = 1;
+            english.VerticalAlignment = Element.ALIGN_TOP;
+            english.HorizontalAlignment = Element.ALIGN_CENTER;
+            table.AddCell(english);
+
+            PdfPCell mathematics = new PdfPCell(new Phrase("Mathematics", fntTableFont));
+            mathematics.Rotation = 90;
+            mathematics.Rowspan = 1;
+            mathematics.VerticalAlignment = Element.ALIGN_TOP;
+            mathematics.HorizontalAlignment = Element.ALIGN_CENTER;
+            table.AddCell(mathematics);
+
+
+            PdfPCell basic = new PdfPCell(new Phrase("Basic Sci.", fntTableFont));
+            basic.Rotation = 90;
+            basic.Rowspan = 1;
+            basic.VerticalAlignment = Element.ALIGN_TOP;
+            basic.HorizontalAlignment = Element.ALIGN_CENTER;
+            table.AddCell(basic);
+
+
+            PdfPCell social = new PdfPCell(new Phrase("Social Studies", fntTableFont));
+            social.Rotation = 90;
+            social.Rowspan = 1;
+            social.VerticalAlignment = Element.ALIGN_TOP;
+            social.HorizontalAlignment = Element.ALIGN_CENTER;
+            table.AddCell(social);
+
+
+            PdfPCell home = new PdfPCell(new Phrase("Home Econs.", fntTableFont));
+            home.Rotation = 90;
+            home.Rowspan = 1;
+            home.VerticalAlignment = Element.ALIGN_TOP;
+            home.HorizontalAlignment = Element.ALIGN_CENTER;
+            table.AddCell(home);
+
+
+            PdfPCell yoruba = new PdfPCell(new Phrase("Yor/Igbo/Hausa", fntTableFont));
+            yoruba.Rotation = 90;
+            yoruba.Rowspan = 1;
+            yoruba.VerticalAlignment = Element.ALIGN_TOP;
+            yoruba.HorizontalAlignment = Element.ALIGN_CENTER;
+            table.AddCell(yoruba);
+
+
+            PdfPCell french = new PdfPCell(new Phrase("French", fntTableFont));
+            french.Rotation = 90;
+            french.Rowspan = 1;
+            french.VerticalAlignment = Element.ALIGN_TOP;
+            french.HorizontalAlignment = Element.ALIGN_CENTER;
+            table.AddCell(french);
+
+
+            PdfPCell computer = new PdfPCell(new Phrase("Computer", fntTableFont));
+            computer.Rotation = 90;
+            computer.Rowspan = 1;
+            computer.VerticalAlignment = Element.ALIGN_TOP;
+            computer.HorizontalAlignment = Element.ALIGN_CENTER;
+            table.AddCell(computer);
+
+
+            PdfPCell crk = new PdfPCell(new Phrase("C.R.K/I.R.K", fntTableFont));
+            crk.Rotation = 90;
+            crk.Rowspan = 1;
+            crk.VerticalAlignment = Element.ALIGN_TOP;
+            crk.HorizontalAlignment = Element.ALIGN_CENTER;
+            table.AddCell(crk);
+
+
+            PdfPCell civil = new PdfPCell(new Phrase("Civil Education", fntTableFont));
+            civil.Rotation = 90;
+            civil.Rowspan = 1;
+            civil.VerticalAlignment = Element.ALIGN_TOP;
+            civil.HorizontalAlignment = Element.ALIGN_CENTER;
+            table.AddCell(civil);
+
+
+            PdfPCell basicT = new PdfPCell(new Phrase("Basic Tech.", fntTableFont));
+            basicT.Rotation = 90;
+            basicT.Rowspan = 1;
+            basicT.VerticalAlignment = Element.ALIGN_TOP;
+            basicT.HorizontalAlignment = Element.ALIGN_CENTER;
+            table.AddCell(basicT);
+
+
+            PdfPCell fineA = new PdfPCell(new Phrase("Fine Art", fntTableFont));
+            fineA.Rotation = 90;
+            fineA.Rowspan = 1;
+            fineA.VerticalAlignment = Element.ALIGN_TOP;
+            fineA.HorizontalAlignment = Element.ALIGN_CENTER;
+            table.AddCell(fineA);
+
+
+            PdfPCell agric = new PdfPCell(new Phrase("Agric. Sci.", fntTableFont));
+            agric.Rotation = 90;
+            agric.Rowspan = 1;
+            agric.VerticalAlignment = Element.ALIGN_TOP;
+            agric.HorizontalAlignment = Element.ALIGN_CENTER;
+            table.AddCell(agric);
+
+            PdfPCell phe = new PdfPCell(new Phrase("P.H.E", fntTableFont));
+            phe.Rotation = 90;
+            phe.Rowspan = 1;
+            phe.VerticalAlignment = Element.ALIGN_TOP;
+            phe.HorizontalAlignment = Element.ALIGN_CENTER;
+            table.AddCell(phe);
+
+
+            PdfPCell music = new PdfPCell(new Phrase("Music", fntTableFont));
+            music.Rotation = 90;
+            music.Rowspan = 1;
+            music.VerticalAlignment = Element.ALIGN_TOP;
+            music.HorizontalAlignment = Element.ALIGN_CENTER;
+            table.AddCell(music);
+
+            PdfPCell bus = new PdfPCell(new Phrase("Bus Stud.", fntTableFont));
+            bus.Rotation = 90;
+            bus.Rowspan = 1;
+            bus.VerticalAlignment = Element.ALIGN_TOP;
+            bus.HorizontalAlignment = Element.ALIGN_CENTER;
+            table.AddCell(bus);
+
+
+            PdfPCell ro = new PdfPCell(new Phrase("Royal English", fntTableFont));
+            ro.Rotation = 90;
+            ro.Rowspan = 1;
+            ro.VerticalAlignment = Element.ALIGN_TOP;
+            bus.HorizontalAlignment = Element.ALIGN_CENTER;
+            table.AddCell(ro);
+
+            //get the table creation to perspective
+
+
+            // attendance record
+            for (int t = 1; t <= 19; t++)
+            {
+                if (t == 1)
+                {
+                    table.AddCell(new PdfPCell(new Phrase("Attendance (%)", fntTableFont)));
+                }
+                if (t == 2)
+                {
+                    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                }
+                if (t == 3)
+                {
+                    if (theResult.EnglishLanguage_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.EnglishLanguage_Attendance.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 4)
+                {
+                    if (theResult.Mathematics_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Mathematics_Attendance.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 5)
+                {
+                    if (theResult.BasicScience_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.BasicScience_Attendance.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 6)
+                {
+                    if (theResult.SocialStudies_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.SocialStudies_Attendance.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 7)
+                {
+                    if (theResult.HomeEconomics_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.HomeEconomics_Attendance.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 8)
+                {
+                    if (theResult.Yoruba_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Yoruba_Attendance.ToString(), fntTableFont)));
+                    }
+                    if (theResult.Igbo_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Igbo_Attendance.ToString(), fntTableFont)));
+                    }
+                    if (theResult.Hausa_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Hausa_Attendance.ToString(), fntTableFont)));
+                    }
+                    //else
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    //}
+
+                }
+
+                if (t == 9)
+                {
+                    if (theResult.French_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.French_Attendance.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 10)
+                {
+                    if (theResult.Computer_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Computer_Attendance.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 11)
+                {
+                    if (theResult.ChristianReligiousKnowledge_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.ChristianReligiousKnowledge_Attendance.ToString(), fntTableFont)));
+                    }
+                    if (theResult.IslamicReligiousKnowledge_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.IslamicReligiousKnowledge_Attendance.ToString(), fntTableFont)));
+                    }
+                    //else
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    //}
+
+                }
+
+                if (t == 12)
+                {
+                    if (theResult.CivicEducation_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.CivicEducation_Attendance.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 13)
+                {
+                    if (theResult.BasicTechnology_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.BasicTechnology_Attendance.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 14)
+                {
+                    if (theResult.CreativeArt_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.CreativeArt_Attendance.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+                if (t == 15)
+                {
+                    if (theResult.AgriculturalScience_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.AgriculturalScience_Attendance.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 16)
+                {
+                    if (theResult.PhysicalHealthEducation_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.PhysicalHealthEducation_Attendance.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+
+                if (t == 17)
+                {
+                    if (theResult.Music_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Music_Attendance.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 18)
+                {
+                    if (theResult.BusinessStudies_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.BusinessStudies_Attendance.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 19)
+                {
+                    if (theResult.RoyalEnglish_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.RoyalEnglish_Attendance.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+            }
+            // ContinuousAssessment
+
+
+            for (int t = 1; t <= 19; t++)
+            {
+                if (t == 1)
+                {
+                    table.AddCell(new PdfPCell(new Phrase("Con. Asses. Score.", fntTableFont)));
+                }
+                if (t == 2)
+                {
+                    table.AddCell(new PdfPCell(new Phrase("40", fntTableFont)));
+                }
+                if (t == 3)
+                {
+                    if (theResult.EnglishLanguage_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.EnglishLanguage_ContinuousAssessment.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 4)
+                {
+                    if (theResult.Mathematics_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Mathematics_ContinuousAssessment.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 5)
+                {
+                    if (theResult.BasicScience_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.BasicScience_ContinuousAssessment.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 6)
+                {
+                    if (theResult.SocialStudies_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.SocialStudies_ContinuousAssessment.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 7)
+                {
+                    if (theResult.HomeEconomics_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.HomeEconomics_ContinuousAssessment.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 8)
+                {
+                    if (theResult.Yoruba_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Yoruba_ContinuousAssessment.ToString(), fntTableFont)));
+                    }
+                    if (theResult.Igbo_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Igbo_ContinuousAssessment.ToString(), fntTableFont)));
+                    }
+                    if (theResult.Hausa_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Hausa_ContinuousAssessment.ToString(), fntTableFont)));
+                    }
+                    //else
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    //}
+
+                }
+
+                if (t == 9)
+                {
+                    if (theResult.French_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.French_ContinuousAssessment.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 10)
+                {
+                    if (theResult.Computer_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Computer_ContinuousAssessment.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 11)
+                {
+                    if (theResult.ChristianReligiousKnowledge_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.ChristianReligiousKnowledge_ContinuousAssessment.ToString(), fntTableFont)));
+                    }
+                    if (theResult.IslamicReligiousKnowledge_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.IslamicReligiousKnowledge_ContinuousAssessment.ToString(), fntTableFont)));
+                    }
+                    //else
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    //}
+
+                }
+
+                if (t == 12)
+                {
+                    if (theResult.CivicEducation_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.CivicEducation_ContinuousAssessment.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 13)
+                {
+                    if (theResult.BasicTechnology_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.BasicTechnology_ContinuousAssessment.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 14)
+                {
+                    if (theResult.CreativeArt_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.CreativeArt_ContinuousAssessment.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+                if (t == 15)
+                {
+                    if (theResult.AgriculturalScience_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.AgriculturalScience_ContinuousAssessment.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 16)
+                {
+                    if (theResult.PhysicalHealthEducation_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.PhysicalHealthEducation_ContinuousAssessment.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+
+                if (t == 17)
+                {
+                    if (theResult.Music_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Music_ContinuousAssessment.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 18)
+                {
+                    if (theResult.BusinessStudies_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.BusinessStudies_ContinuousAssessment.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 19)
+                {
+                    if (theResult.RoyalEnglish_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.RoyalEnglish_ContinuousAssessment.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+            }
+
+
+
+
+            //eXAM SCORE
+            for (int t = 1; t <= 19; t++)
+            {
+                if (t == 1)
+                {
+                    table.AddCell(new PdfPCell(new Phrase("Exam Score", fntTableFont)));
+                }
+                if (t == 2)
+                {
+                    table.AddCell(new PdfPCell(new Phrase("60", fntTableFont)));
+                }
+                if (t == 3)
+                {
+                    if (theResult.EnglishLanguage_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.EnglishLanguage_ExaminationScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 4)
+                {
+                    if (theResult.Mathematics_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Mathematics_ExaminationScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 5)
+                {
+                    if (theResult.BasicScience_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.BasicScience_ExaminationScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 6)
+                {
+                    if (theResult.SocialStudies_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.SocialStudies_ExaminationScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 7)
+                {
+                    if (theResult.HomeEconomics_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.HomeEconomics_ExaminationScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 8)
+                {
+                    if (theResult.Yoruba_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Yoruba_ExaminationScore.ToString(), fntTableFont)));
+                    }
+                    if (theResult.Igbo_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Igbo_ExaminationScore.ToString(), fntTableFont)));
+                    }
+                    if (theResult.Hausa_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Hausa_ExaminationScore.ToString(), fntTableFont)));
+                    }
+                    //else
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    //}
+
+                }
+
+                if (t == 9)
+                {
+                    if (theResult.French_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.French_ExaminationScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 10)
+                {
+                    if (theResult.Computer_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Computer_ExaminationScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 11)
+                {
+                    if (theResult.ChristianReligiousKnowledge_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.ChristianReligiousKnowledge_ExaminationScore.ToString(), fntTableFont)));
+                    }
+                    if (theResult.IslamicReligiousKnowledge_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.IslamicReligiousKnowledge_ExaminationScore.ToString(), fntTableFont)));
+                    }
+                    //else
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    //}
+
+                }
+
+                if (t == 12)
+                {
+                    if (theResult.CivicEducation_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.CivicEducation_ExaminationScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 13)
+                {
+                    if (theResult.BasicTechnology_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.BasicTechnology_ExaminationScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 14)
+                {
+                    if (theResult.CreativeArt_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.CreativeArt_ExaminationScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+                if (t == 15)
+                {
+                    if (theResult.AgriculturalScience_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.AgriculturalScience_ExaminationScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 16)
+                {
+                    if (theResult.PhysicalHealthEducation_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.PhysicalHealthEducation_ExaminationScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+
+                if (t == 17)
+                {
+                    if (theResult.Music_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Music_ExaminationScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 18)
+                {
+                    if (theResult.BusinessStudies_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.BusinessStudies_ExaminationScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 19)
+                {
+                    if (theResult.RoyalEnglish_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.RoyalEnglish_ExaminationScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+            }
+
+
+
+
+
+
+
+
+
+            //Total Score
+            for (int t = 1; t <= 19; t++)
+            {
+                if (t == 1)
+                {
+                    table.AddCell(new PdfPCell(new Phrase("Total Score", fntTableFont)));
+                }
+                if (t == 2)
+                {
+                    table.AddCell(new PdfPCell(new Phrase("100", fntTableFont)));
+                }
+                if (t == 3)
+                {
+                    if (theResult.EnglishLanguage_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.EnglishLanguage_TotalScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 4)
+                {
+                    if (theResult.Mathematics_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Mathematics_TotalScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 5)
+                {
+                    if (theResult.BasicScience_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.BasicScience_TotalScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 6)
+                {
+                    if (theResult.SocialStudies_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.SocialStudies_TotalScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 7)
+                {
+                    if (theResult.HomeEconomics_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.HomeEconomics_TotalScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 8)
+                {
+                    if (theResult.Yoruba_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Yoruba_TotalScore.ToString(), fntTableFont)));
+                    }
+                    if (theResult.Igbo_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Igbo_TotalScore.ToString(), fntTableFont)));
+                    }
+                    if (theResult.Hausa_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Hausa_TotalScore.ToString(), fntTableFont)));
+                    }
+                    //else
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    //}
+
+                }
+
+                if (t == 9)
+                {
+                    if (theResult.French_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.French_TotalScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 10)
+                {
+                    if (theResult.Computer_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Computer_TotalScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 11)
+                {
+                    if (theResult.ChristianReligiousKnowledge_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.ChristianReligiousKnowledge_TotalScore.ToString(), fntTableFont)));
+                    }
+                    if (theResult.IslamicReligiousKnowledge_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.IslamicReligiousKnowledge_TotalScore.ToString(), fntTableFont)));
+                    }
+                    //else
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    //}
+
+                }
+
+                if (t == 12)
+                {
+                    if (theResult.CivicEducation_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.CivicEducation_TotalScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 13)
+                {
+                    if (theResult.BasicTechnology_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.BasicTechnology_TotalScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 14)
+                {
+                    if (theResult.CreativeArt_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.CreativeArt_TotalScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+                if (t == 15)
+                {
+                    if (theResult.AgriculturalScience_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.AgriculturalScience_TotalScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 16)
+                {
+                    if (theResult.PhysicalHealthEducation_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.PhysicalHealthEducation_TotalScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+
+                if (t == 17)
+                {
+                    if (theResult.Music_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.Music_TotalScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 18)
+                {
+                    if (theResult.BusinessStudies_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.BusinessStudies_TotalScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 19)
+                {
+                    if (theResult.RoyalEnglish_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(theResult.RoyalEnglish_TotalScore.ToString(), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+            }
+
+
+
+
+
+            //Grade / subject
+            for (int t = 1; t <= 19; t++)
+            {
+                if (t == 1)
+                {
+                    table.AddCell(new PdfPCell(new Phrase("Grade Per Subject", fntTableFont)));
+                }
+                if (t == 2)
+                {
+                    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                }
+                if (t == 3)
+                {
+                    if (theResult.EnglishLanguage_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(GradeCalculator.Calculate(theResult.EnglishLanguage_TotalScore), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 4)
+                {
+                    if (theResult.Mathematics_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(GradeCalculator.Calculate(theResult.Mathematics_TotalScore), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 5)
+                {
+                    if (theResult.BasicScience_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(GradeCalculator.Calculate(theResult.BasicScience_TotalScore), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 6)
+                {
+                    if (theResult.SocialStudies_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(GradeCalculator.Calculate(theResult.SocialStudies_TotalScore), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 7)
+                {
+                    if (theResult.HomeEconomics_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(GradeCalculator.Calculate(theResult.HomeEconomics_TotalScore), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 8)
+                {
+                    if (theResult.Yoruba_Attendance > 0 || theResult.Igbo_Attendance > 0 || theResult.Hausa_Attendance > 0)
+                    {
+                        if (theResult.Yoruba_Attendance > 0)
+                        {
+                            table.AddCell(new PdfPCell(new Phrase(GradeCalculator.Calculate(theResult.Yoruba_TotalScore), fntTableFont)));
+                        }
+                        if (theResult.Igbo_Attendance > 0)
+                        {
+                            table.AddCell(new PdfPCell(new Phrase(GradeCalculator.Calculate(theResult.Igbo_TotalScore), fntTableFont)));
+                        }
+                        if (theResult.Hausa_Attendance > 0)
+                        {
+                            table.AddCell(new PdfPCell(new Phrase(GradeCalculator.Calculate(theResult.Hausa_TotalScore), fntTableFont)));
+                        }
+                    }
+
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 9)
+                {
+                    if (theResult.French_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(GradeCalculator.Calculate(theResult.French_TotalScore), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 10)
+                {
+                    if (theResult.Computer_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(GradeCalculator.Calculate(theResult.Computer_TotalScore), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 11)
+                {
+                    if (theResult.ChristianReligiousKnowledge_Attendance > 0 || theResult.IslamicReligiousKnowledge_Attendance > 0)
+                    {
+                        if (theResult.ChristianReligiousKnowledge_Attendance > 0)
+                        {
+                            table.AddCell(new PdfPCell(new Phrase(GradeCalculator.Calculate(theResult.ChristianReligiousKnowledge_TotalScore), fntTableFont)));
+                        }
+                        if (theResult.IslamicReligiousKnowledge_Attendance > 0)
+                        {
+                            table.AddCell(new PdfPCell(new Phrase(GradeCalculator.Calculate(theResult.ChristianReligiousKnowledge_TotalScore), fntTableFont)));
+                        }
+                    }
+                   
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 12)
+                {
+                    if (theResult.CivicEducation_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(GradeCalculator.Calculate(theResult.CivicEducation_TotalScore), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 13)
+                {
+                    if (theResult.BasicTechnology_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(GradeCalculator.Calculate(theResult.BasicTechnology_TotalScore), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 14)
+                {
+                    if (theResult.CreativeArt_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(GradeCalculator.Calculate(theResult.CreativeArt_TotalScore), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+                if (t == 15)
+                {
+                    if (theResult.AgriculturalScience_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(GradeCalculator.Calculate(theResult.AgriculturalScience_TotalScore), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 16)
+                {
+                    if (theResult.PhysicalHealthEducation_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(GradeCalculator.Calculate(theResult.PhysicalHealthEducation_TotalScore), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+
+                if (t == 17)
+                {
+                    if (theResult.Music_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(GradeCalculator.Calculate(theResult.Music_TotalScore), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 18)
+                {
+                    if (theResult.BusinessStudies_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(GradeCalculator.Calculate(theResult.BusinessStudies_TotalScore), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+
+                if (t == 19)
+                {
+                    if (theResult.RoyalEnglish_Attendance > 0)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(GradeCalculator.Calculate(theResult.RoyalEnglish_TotalScore), fntTableFont)));
+                    }
+                    else
+                    {
+                        table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    }
+
+                }
+            }
+
+            //Grade / subject
+            for (int t = 1; t <= 19; t++)
+            {
+                if (t == 1)
+                {
+                    table.AddCell(new PdfPCell(new Phrase("Teacher's Sign", fntTableFont)));
+                }
+                if (t == 2)
+                {
+                    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                }
+                if (t == 3)
+                {
+                    //if (theResult.EnglishLanguage_Attendance > 0)
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase(theResult.EnglishLanguage_TotalScore.ToString(), fntTableFont)));
+                    //}
+                    //else
+                    //{
+                    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    //   }
+
+                }
+
+                if (t == 4)
+                {
+                    //if (theResult.Mathematics_Attendance > 0)
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase(theResult.Mathematics_TotalScore.ToString(), fntTableFont)));
+                    //}
+                    //else
+                    //{
+                    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    // }
+
+                }
+
+                if (t == 5)
+                {
+                    //if (theResult.BasicScience_Attendance > 0)
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase(theResult.BasicScience_TotalScore.ToString(), fntTableFont)));
+                    //}
+                    //else
+                    //{
+                    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    // }
+
+                }
+
+                if (t == 6)
+                {
+                    //if (theResult.SocialStudies_Attendance > 0)
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase(theResult.SocialStudies_TotalScore.ToString(), fntTableFont)));
+                    //}
+                    //else
+                    //{
+                    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    //  }
+
+                }
+
+                if (t == 7)
+                {
+                    //if (theResult.HomeEconomics_Attendance > 0)
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase(theResult.HomeEconomics_TotalScore.ToString(), fntTableFont)));
+                    //}
+                    //else
+                    //{
+                    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    //    }
+
+                }
+
+                if (t == 8)
+                {
+                    //if (theResult.Yoruba_Attendance > 0)
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase(theResult.Yoruba_TotalScore.ToString(), fntTableFont)));
+                    //}
+                    //if (theResult.Igbo_Attendance > 0)
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase(theResult.Igbo_TotalScore.ToString(), fntTableFont)));
+                    //}
+                    //if (theResult.Hausa_Attendance > 0)
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase(theResult.Hausa_TotalScore.ToString(), fntTableFont)));
+                    //}
+                    //else
+                    //{
+                    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    //}
+
+                }
+
+                if (t == 9)
+                {
+                    //if (theResult.French_Attendance > 0)
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase(theResult.French_TotalScore.ToString(), fntTableFont)));
+                    //}
+                    //else
+                    ////{
+                    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    // }
+
+                }
+
+                if (t == 10)
+                {
+                    //    if (theResult.Computer_Attendance > 0)
+                    //    {
+                    //        table.AddCell(new PdfPCell(new Phrase(theResult.Computer_TotalScore.ToString(), fntTableFont)));
+                    //    }
+                    //    else
+                    //    {
+                    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    //  }
+
+                }
+
+                if (t == 11)
+                {
+                    //if (theResult.ChristianReligiousKnowledge_Attendance > 0)
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase(theResult.ChristianReligiousKnowledge_TotalScore.ToString(), fntTableFont)));
+                    //}
+                    //if (theResult.IslamicReligiousKnowledge_Attendance > 0)
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase(theResult.IslamicReligiousKnowledge_TotalScore.ToString(), fntTableFont)));
+                    //}
+                    //else
+                    //{
+                    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    //}
+
+                }
+
+                if (t == 12)
+                {
+                    //if (theResult.CivicEducation_Attendance > 0)
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase(theResult.CivicEducation_TotalScore.ToString(), fntTableFont)));
+                    //}
+                    //else
+                    //{
+                    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    //  }
+
+                }
+
+                if (t == 13)
+                {
+                    //if (theResult.BasicTechnology_Attendance > 0)
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase(theResult.BasicTechnology_TotalScore.ToString(), fntTableFont)));
+                    //}
+                    //else
+                    //{
+                    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    //}
+
+                }
+
+                if (t == 14)
+                {
+                    //if (theResult.CreativeArt_Attendance > 0)
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase(theResult.CreativeArt_TotalScore.ToString(), fntTableFont)));
+                    //}
+                    //else
+                    //{
+                    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    //  }
+
+                }
+                if (t == 15)
+                {
+                    //if (theResult.AgriculturalScience_Attendance > 0)
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase(theResult.AgriculturalScience_TotalScore.ToString(), fntTableFont)));
+                    //}
+                    //else
+                    //{
+                    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    //   }
+
+                }
+
+                if (t == 16)
+                {
+                    //if (theResult.PhysicalHealthEducation_Attendance > 0)
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase(theResult.PhysicalHealthEducation_TotalScore.ToString(), fntTableFont)));
+                    //}
+                    //else
+                    //{
+                    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    // }
+
+                }
+
+
+                if (t == 17)
+                {
+                    //if (theResult.Music_Attendance > 0)
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase(theResult.Music_TotalScore.ToString(), fntTableFont)));
+                    //}
+                    //else
+                    //{
+                    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    // }
+
+                }
+
+                if (t == 18)
+                {
+                    //if (theResult.BusinessStudies_Attendance > 0)
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase(theResult.BusinessStudies_TotalScore.ToString(), fntTableFont)));
+                    //}
+                    //else
+                    //{
+                    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    // }
+
+                }
+
+                if (t == 19)
+                {
+                    //if (theResult.RoyalEnglish_Attendance > 0)
+                    //{
+                    //    table.AddCell(new PdfPCell(new Phrase(theResult.RoyalEnglish_TotalScore.ToString(), fntTableFont)));
+                    //}
+                    //else
+                    //{
+                    table.AddCell(new PdfPCell(new Phrase("", fntTableFont)));
+                    //}
+
+                }
+            }
+
+
+
+
+
+            itextDoc.Add(table);
+
+            // cell2.VerticalAlignment = iTextSharp.text.Element.ALIGN_MIDDLE;
+            // cell2.Phrase = new Phrase("Max Obtainable");
+            // table.AddCell(CellZero2);
+            itextDoc.Add(new Paragraph("   "));
+            //   itextDoc.Add(table1);
+            itextDoc.Add(new Paragraph("3. TOTAL SCORE OBTAINABLE: " + theResult.TotalScoreObtainable + "                                                                                                             TOTAL SCORE OBTAINED: " + theResult.TotalScoreObtained, font_heading_2));
+            itextDoc.Add(new Paragraph("4. PERCENTAGE:  " + (theResult.Percentage / 100), font_heading_2));
+
+            itextDoc.Add(new Paragraph("                                                                                                   2. COGNITIVE ASSESSMENT  ", font_heading_2));
+
+
+            PdfPTable assessmentheader = new PdfPTable(1);
+
+            assessmentheader.AddCell(new Phrase("PSYCHOMOTOR ASSESSMENT", font_heading_2));
+
+            PdfPTable assessmentrecord = new PdfPTable(2);
+            assessmentrecord.AddCell(new Phrase("Fluency", fntTableFont));
+            assessmentrecord.AddCell(new Phrase(theResult.Fluency, fntTableFont));
+
+            assessmentrecord.AddCell(new Phrase("Games", fntTableFont));
+            assessmentrecord.AddCell(new Phrase(theResult.Games, fntTableFont));
+
+            assessmentrecord.AddCell(new Phrase("Sports", fntTableFont));
+            assessmentrecord.AddCell(new Phrase(theResult.Sports, fntTableFont));
+
+
+            assessmentrecord.AddCell(new Phrase("Handling of Tools", fntTableFont));
+            assessmentrecord.AddCell(new Phrase(theResult.HandlingofTools, fntTableFont));
+
+
+            assessmentrecord.AddCell(new Phrase("Musical Skills", fntTableFont));
+            assessmentrecord.AddCell(new Phrase(theResult.MusicalSkills, fntTableFont));
+
+
+
+            PdfPTable assessmenteffectiveheader = new PdfPTable(1);
+
+            assessmenteffectiveheader.AddCell(new Phrase("EFFECTIVE ASSESSMENT", font_heading_2));
+
+
+
+
+            PdfPTable assessmenteffective = new PdfPTable(2);
+            assessmenteffective.AddCell(new Phrase("Attentive and work Independently", fntTableFont));
+            assessmenteffective.AddCell(new Phrase(theResult.AttentiveandWorkIndependently, fntTableFont));
+
+            assessmenteffective.AddCell(new Phrase("Does homework regulary", fntTableFont));
+            assessmenteffective.AddCell(new Phrase(theResult.DoesHomeworkRegularly, fntTableFont));
+
+            assessmenteffective.AddCell(new Phrase("Is neat and orderly", fntTableFont));
+            assessmenteffective.AddCell(new Phrase(theResult.IsNeatandOrderly, fntTableFont));
+
+
+            assessmenteffective.AddCell(new Phrase("Respect authority", fntTableFont));
+            assessmenteffective.AddCell(new Phrase(theResult.Respectauthority, fntTableFont));
+
+            assessmenteffective.AddCell(new Phrase("Take care of Books and Property", fntTableFont));
+            assessmenteffective.AddCell(new Phrase(theResult.TakeCareofBooksandProperty, fntTableFont));
+
+            //assessmentrecord.AddCell(new Phrase("Musical Skills"));
+            //assessmentrecord.AddCell(new Phrase(""));
+
+            // PdfPTable assessment = new PdfPTable(1);
+
+            //   itextDoc.Add(new Paragraph("   "));
+            //  itextDoc.Add(new Paragraph("   "));
+
+
+            PdfPTable meger = new PdfPTable(4);
+
+            meger.HorizontalAlignment = 0;
+            meger.TotalWidth = 500f;
+            meger.LockedWidth = true;
+            float[] widthsmeger = new float[] { 20f, 230f, 20f, 230f };
+            meger.SetWidths(widthsmeger);
+            meger.DefaultCell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+
+            //   meger.AddCell("5");
+            meger.AddCell((new Paragraph("5", font_heading_2)));
+            meger.AddCell(assessmentheader);
+            //  meger.AddCell("6");
+            meger.AddCell(new Paragraph("6", font_heading_2));
+            meger.AddCell(assessmenteffectiveheader);
+
+            meger.AddCell(new Paragraph(""));
+            meger.AddCell(assessmentrecord);
+            meger.AddCell(new Paragraph(""));
+
+            meger.AddCell(assessmenteffective);
+
+
+            //  int counter = 1;
+
+
+
+            //   itextDoc.Add(new Paragraph("   "));
+            itextDoc.Add(new Paragraph("   "));
+            itextDoc.Add(meger);
+
+            itextDoc.Add(new Paragraph("   "));
+            //   itextDoc.Add(table1);
+            itextDoc.Add(new Paragraph("7. Club, Youth Organisation :", font_heading_2));
+            itextDoc.Add(new Paragraph("8. Sport Activities ", font_heading_2));
+            itextDoc.Add(new Paragraph("   "));
+
+
+            PdfPTable comment = new PdfPTable(2);
+            comment.HorizontalAlignment = 0;
+            comment.TotalWidth = 500f;
+            comment.LockedWidth = true;
+            float[] widthscomment = new float[] { 400f, 100f };
+            comment.SetWidths(widthscomment);
+            comment.DefaultCell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+
+            comment.AddCell(new Paragraph("FORM MASTER'S COMMENT: " + theResult.FormMastersComments, font_heading_2));
+
+            comment.AddCell(new Paragraph("Master's Signature............", font_heading_2));
+
+
+            comment.AddCell(new Paragraph("PRINCIPAL'S COMMENT: " + theResult.PrincipalsComment, font_heading_2));
+
+            comment.AddCell(new Paragraph(" Signature, Sch. Stamp and Date........", font_heading_2));
+
+            itextDoc.Add(comment);
+
+            //  itextDoc.Add(new Paragraph("FORM MASTER'S COMMENT: " + theResult.FormMastersComments +          "     Master's Signature......................................", font_heading_2));
+            // itextDoc.Add(new Paragraph(" Master's Signature ..................................................", font_heading_2));
+
+            //  itextDoc.Add(new Paragraph("PRINCIPAL'S COMMENT : " + theResult.PrincipalsComment + "        Signature, Sch. Stamp and Date...............................", font_heading_2));
+
+            // itextDoc.Add(new Paragraph("Signature, Sch. Stamp and Date...........................................", font_heading_2));
+            return itextDoc;
+        }
+    }
+}

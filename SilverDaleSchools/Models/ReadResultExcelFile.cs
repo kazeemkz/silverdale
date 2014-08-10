@@ -74,7 +74,7 @@ namespace SilverDaleSchools.Models
 
                             theNewResult.Othernames = excelReader.GetString(3);
 
-                            theNewResult.Class = excelReader.GetString(4);
+                            theNewResult.Class = theClass;//excelReader.GetString(4);
 
                             theNewResult.Sex = excelReader.GetString(5);
 
@@ -464,14 +464,23 @@ namespace SilverDaleSchools.Models
                                 theNewResult.BasicTechnology_TotalScore = Convert.ToDecimal((excelReader.GetString(152)));
                             }
 
-
-                            //creative art 
+                            //Civil Education
                             if (!(string.IsNullOrEmpty((excelReader.GetString(156)))))
                             {
-                                theNewResult.CreativeArt_Attendance = Convert.ToInt16((excelReader.GetString(153)));
-                                theNewResult.CreativeArt_ContinuousAssessment = Convert.ToDecimal((excelReader.GetString(154)));
-                                theNewResult.CreativeArt_ExaminationScore = Convert.ToDecimal((excelReader.GetString(155)));
-                                theNewResult.CreativeArt_TotalScore = Convert.ToDecimal((excelReader.GetString(156)));
+                                theNewResult.CivicEducation_Attendance = Convert.ToInt16((excelReader.GetString(153)));
+                                theNewResult.CivicEducation_ContinuousAssessment = Convert.ToDecimal((excelReader.GetString(154)));
+                                theNewResult.CivicEducation_ExaminationScore = Convert.ToDecimal((excelReader.GetString(155)));
+                                theNewResult.CivicEducation_TotalScore = Convert.ToDecimal((excelReader.GetString(156)));
+                            }
+
+
+                            //creative art 
+                            if (!(string.IsNullOrEmpty((excelReader.GetString(160)))))
+                            {
+                                theNewResult.CreativeArt_Attendance = Convert.ToInt16((excelReader.GetString(157)));
+                                theNewResult.CreativeArt_ContinuousAssessment = Convert.ToDecimal((excelReader.GetString(158)));
+                                theNewResult.CreativeArt_ExaminationScore = Convert.ToDecimal((excelReader.GetString(159)));
+                                theNewResult.CreativeArt_TotalScore = Convert.ToDecimal((excelReader.GetString(160)));
                             }
 
                             ////creative art 
@@ -483,7 +492,7 @@ namespace SilverDaleSchools.Models
                             //    theNewResult.CreativeArt_TotalScore = Convert.ToDecimal((excelReader.GetString(154)));
                             //}
 
-
+                           // theNewResult.ClassUploaded = ;
                            // work.ResultRepository.Insert(theNewResult);
 
                             theResultList.Add(theNewResult);

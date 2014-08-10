@@ -32,7 +32,7 @@ namespace SilverDaleSchools.Controllers
 
             foreach (var level in theLevels)
             {
-                theItem.Add(new SelectListItem() { Text = level.LevelName, Value = level.LevelName });
+                theItem.Add(new SelectListItem() { Text = level.LevelName + ":" + level.Type, Value = level.LevelName + ":" + level.Type });
             }
 
             ViewData["Level"] = theItem;
@@ -104,10 +104,12 @@ namespace SilverDaleSchools.Controllers
             List<Level> theLevels = work.LevelRepository.Get().ToList();
             List<SelectListItem> theItem = new List<SelectListItem>();
             theItem.Add(new SelectListItem() { Text = "None", Value = "" });
-            foreach (Level l in theLevels)
+
+            foreach (var level in theLevels)
             {
-                theItem.Add(new SelectListItem() { Text = l.LevelName, Value = l.LevelName });
+                theItem.Add(new SelectListItem() { Text = level.LevelName + ":" + level.Type, Value = level.LevelName + ":" + level.Type });
             }
+
             ViewData["Class"] = theItem;
             return View();
         }
@@ -130,10 +132,12 @@ namespace SilverDaleSchools.Controllers
                     List<Level> theLevels = work.LevelRepository.Get().ToList();
                     List<SelectListItem> theItem = new List<SelectListItem>();
                     theItem.Add(new SelectListItem() { Text = "None", Value = "" });
-                    foreach (Level l in theLevels)
+
+                    foreach (var level in theLevels)
                     {
-                        theItem.Add(new SelectListItem() { Text = l.LevelName, Value = l.LevelName });
+                        theItem.Add(new SelectListItem() { Text = level.LevelName + ":" + level.Type, Value = level.LevelName + ":" + level.Type });
                     }
+
                     ViewData["Class"] = theItem;
                     ModelState.AddModelError("", "You have uploaded for the class earlier!");
                     return View();
@@ -174,52 +178,76 @@ namespace SilverDaleSchools.Controllers
                 List<Level> theLevels = work.LevelRepository.Get().ToList();
                 List<SelectListItem> theItem = new List<SelectListItem>();
                 theItem.Add(new SelectListItem() { Text = "None", Value = "" });
-                foreach (Level l in theLevels)
+
+                foreach (var level in theLevels)
                 {
-                    theItem.Add(new SelectListItem() { Text = l.LevelName, Value = l.LevelName });
+                    theItem.Add(new SelectListItem() { Text = level.LevelName + ":" + level.Type, Value = level.LevelName + ":" + level.Type });
                 }
+
                 ViewData["Class"] = theItem;
                 return View();
             }
         }
 
 
-        //public ActionResult PrintResult(int id)
-        //{
-        //   // Result theResult = work.ResultRepository.GetByID(id);
+        public ActionResult PrintResult(int id)
+        {
+            Result theResult = work.ResultRepository.GetByID(id);
 
-        //    StringWriter oStringWriter1 = new StringWriter();
-        //    Document itextDoc = new Document(PageSize.LETTER);
-        //    itextDoc.Open();
-        //    Response.ContentType = "application/pdf";
-        //  //  PrintResult print = new PrintResult();
-        //    // Set up the document and the MS to write it to and create the PDF writer instance
-        //    MemoryStream ms = new MemoryStream();
-        //    //Document document = new Document(PageSize.A3.Rotate());
-        //    Document document = new Document(PageSize.A4);
-        //    PdfWriter writer = PdfWriter.GetInstance(document, ms);
+         string[] SplitedClass =   theResult.Class.Split(':');
 
-        //    // Open the PDF document
-        //    document.Open();
+         string theClass = SplitedClass[0];
+         string[] theClassNumber = theClass.Split(null);
+         string theNumber = theClassNumber[1];
 
-        //    Document thedoc = new SalaryPrinting().PrintPaySlip(thePaymentNow, ref oStringWriter1, ref document);
-        //    iTextSharp.text.pdf.draw.VerticalPositionMark seperator = new iTextSharp.text.pdf.draw.LineSeparator();
-        //    seperator.Offset = -6f;
 
-        //    document.Close();
+           
 
-        //    // Hat tip to David for his code on stackoverflow for this bit
-        //    // http://stackoverflow.com/questions/779430/asp-net-mvc-how-to-get-view-to-generate-pdf
-        //    byte[] file = ms.ToArray();
-        //    MemoryStream output = new MemoryStream();
-        //    output.Write(file, 0, file.Length);
-        //    output.Position = 0;
-        //    // work.DeductionHistoryRepository
-        //    HttpContext.Response.AddHeader("content-disposition", "attachment; filename=form.pdf");
-        //    return new FileStreamResult(output, "application/pdf"); //new FileStreamResult(output, "application/pdf");
-        //}
-        //
-        // GET: /Result/Edit/5
+            StringWriter oStringWriter1 = new StringWriter();
+            Document itextDoc = new Document(PageSize.A4);
+            itextDoc.Open();
+            Response.ContentType = "application/pdf";
+          //  PrintResult print = new PrintResult();
+            // Set up the document and the MS to write it to and create the PDF writer instance
+            MemoryStream ms = new MemoryStream();
+            //Document document = new Document(PageSize.A3.Rotate());
+            Document document = new Document(PageSize.A4);
+            PdfWriter writer = PdfWriter.GetInstance(document, ms);
+
+            // Open the PDF document
+            document.Open();
+            Document thedoc = new Document();
+            if (!(string.IsNullOrEmpty(theNumber)))
+            {
+                int theNewNumber = Convert.ToInt16(theNumber);
+
+                if(theNewNumber > 9)
+                {
+                    thedoc = new PrintResultSenoir().PrintSilverDaleResult(theResult, ref oStringWriter1, ref document);
+                }
+                else
+                {
+                    thedoc = new PrintResult().PrintSilverDaleResult(theResult, ref oStringWriter1, ref document);
+                }
+            }
+            
+            iTextSharp.text.pdf.draw.VerticalPositionMark seperator = new iTextSharp.text.pdf.draw.LineSeparator();
+            seperator.Offset = -6f;
+
+            document.Close();
+
+            // Hat tip to David for his code on stackoverflow for this bit
+            // http://stackoverflow.com/questions/779430/asp-net-mvc-how-to-get-view-to-generate-pdf
+            byte[] file = ms.ToArray();
+            MemoryStream output = new MemoryStream();
+            output.Write(file, 0, file.Length);
+            output.Position = 0;
+            // work.DeductionHistoryRepository
+            HttpContext.Response.AddHeader("content-disposition", "attachment; filename=Result.pdf");
+            return new FileStreamResult(output, "application/pdf"); //new FileStreamResult(output, "application/pdf");
+        }
+        
+      //   GET: /Result/Edit/5
         [DynamicAuthorize]
         public ActionResult Edit(int id)
         {

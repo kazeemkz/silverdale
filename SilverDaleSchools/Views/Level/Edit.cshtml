@@ -9,27 +9,46 @@
 
 @using (Html.BeginForm()) {
     @Html.ValidationSummary(true)
+      @Html.HiddenFor(model => model.LevelID)
+    
+      <fieldset>
+        <legend></legend>
+        <div class="form-horizontal">
+            <h5>EDIT CLASS</h5>
+            <hr />
+            @Html.ValidationSummary(true)
+            <div class="form-group">
+                @Html.LabelFor(model => model.LevelName, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                  @Html.DropDownListFor(model => model.LevelName, SilverDaleSchools.Model.LevelDictionary.ClasssListSilverDale)
+                    @Html.ValidationMessageFor(model => model.LevelName)
+                </div>
+            </div>
 
-    <fieldset>
-        <legend> Edit Class</legend>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Type, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                  @Html.EditorFor(model => model.Type)
+@Html.ValidationMessageFor(model => model.Type)
+                </div>
+            </div>
 
-        @Html.HiddenFor(model => model.LevelID)
-
-        <div class="editor-label">
-            @Html.LabelFor(model => model.LevelName)
+           
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+            </div>
+           
         </div>
-        <div class="editor-field">
-           @Html.EditorFor(model => model.LevelName)
-            @Html.ValidationMessageFor(model => model.LevelName)
-             @*@Html.DropDownListFor(model => model.LevelName, SilverDaleSchools.Model.LevelDictionary.LevelDicoList)*@
-        </div>
+         
+    </fieldset>
+    
+    
+        
 
        
-
-        <p>
-            <input type="submit" value="Save" id="button" class="btn-primary" />
-        </p>
-    </fieldset>
+  
 }
 
 <div id="button2">
