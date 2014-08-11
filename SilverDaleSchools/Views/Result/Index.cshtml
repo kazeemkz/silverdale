@@ -1076,9 +1076,9 @@
                 <td>
 
 
-                    @Html.ActionLink("Check Result", "Details", new { id = item.ResultID }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.ResultID }) |
 
-                    @Html.ActionLink("Download Result", "PrintResult", new { id = item.ResultID }) |
+                    @Html.ActionLink("Download", "PrintResult", new { id = item.ResultID }) |
                     @if (!(User.IsInRole("Student")))
                     {
                         @Html.ActionLink("Edit", "Edit", new { id = item.ResultID })
